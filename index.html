@@ -58,7 +58,7 @@ body::before{content:"";position:fixed;inset:0;background:
 
 /* ---------- tabs ---------- */
 .tabs{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(255,248,242,.96),rgba(255,248,242,.88) 78%,transparent);
-  padding:10px 0 12px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%}
+  padding:10px 0 12px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;width:100%}
 .tab{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 2px;font-size:11.5px;font-weight:600;color:var(--ink2);
   text-align:center;cursor:pointer;transition:.25s;box-shadow:0 2px 6px rgba(160,90,110,.06);min-width:0;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;outline:none}
@@ -148,6 +148,7 @@ details .in b{color:var(--rose-d)}
     <button class="tab on" data-v="checkup">产检</button>
     <button class="tab" data-v="big">大事</button>
     <button class="tab" data-v="fun">趣事</button>
+    <button class="tab" data-v="fetal">胎动</button>
     <button class="tab" data-v="gz">广州办事</button>
     <button class="tab" data-v="med">常备药</button>
     <button class="tab" data-v="diet">忌口</button>
@@ -612,14 +613,50 @@ function renderDiet(){
   +"</div></details>").join("")+"</div>";
  $("#view").innerHTML=html;
 }
+function renderFetal(){
+ let html="<article class='card' style='--i:0;border-left-color:var(--sage)'>"
+ +"<div class='meta'><span class='dt'>孕28周起</span><span class='chip fun'>每日必修</span></div>"
+ +"<h3>👶 数胎动：宝宝在宫内的“晴雨表”</h3>"
+ +"<div class='desc'>胎动是评估宝宝宫内状况最直接的信号——宫内缺氧最早的表现往往是胎动改变，比胎心更早。孕28周后每天数胎动，和每天吃叶酸一样是必修课。</div></article>";
+ html+="<div class='acc'>"
+ +"<details open><summary>⏰ 何时开始数</summary><div class='in'><ul>"
+ +"<li>孕28周起：每天固定时段数胎动——这是孕期保健指南的基本要求</li>"
+ +"<li>高危妊娠（妊娠期高血压、糖尿病、脐带绕颈、羊水异常等）：医生可能要求24-26周就开始，遵医嘱</li>"
+ +"<li>28周前胎动不规律很正常，别焦虑；28周后宝宝作息逐渐规律，才好做对比</li></ul></div></details>"
+ +"<details><summary>🖐 标准数法（选一种坚持）</summary><div class='in'><ul>"
+ +"<li><b>三小时法（推荐）</b>：每天早、中、晚固定时段各数1小时（如早饭后、下午、睡前）</li>"
+ +"<li><b>两小时法（省时）</b>：每天任选1个时段，侧卧连数2小时，累计≥10次为正常</li>"
+ +"<li>计数规则：宝宝连续动算1次；停2-3分钟后再动才算新的1次</li>"
+ +"<li>姿势：左侧卧或靠坐，放松专注——别边刷手机边数</li>"
+ +"<li>宝宝睡懒觉？吃点甜的、喝口水、轻轻拍肚子唤醒后再数</li></ul></div></details>"
+ +"<details><summary>📐 合格标准（牢记两条线）</summary><div class='in'><ul>"
+ +"<li><b>每小时≥3次</b>：不足3次就再数1小时，仍不足→当天安排就医</li>"
+ +"<li><b>两小时≥10次</b>：不足10次→立即就医，别等第二天</li>"
+ +"<li>常见节奏：上午偏少、下午中等、晚上最多——关键看<b>自己跟自己平时比</b></li>"
+ +"<li>记录方式：胎动计数器App、纸笔画“正”字、医院发的胎动卡均可，产检时给医生看</li></ul></div></details>"
+ +"<details><summary>🚨 异常信号（出现就出发去医院）</summary><div class='in'><ul>"
+ +"<li><b>明显减少</b>：比平时减少一半以上，或小时＜3次、2小时＜10次</li>"
+ +"<li><b>突然剧烈频繁</b>：与平时习惯明显不同也不可大意（如持续大幅翻腾）</li>"
+ +"<li><b>胎动消失</b>：立刻去急诊——尤其28周后，别用“宝宝今天懒了”自我安慰</li>"
+ +"<li>“一直都不多”的宝宝常见；“突然变少”的宝宝最需要警惕</li>"
+ +"<li>就医时带上胎动记录，告诉医生最近24小时的次数变化</li></ul></div></details>"
+ +"<details><summary>❓ 常见疑问</summary><div class='in'><ul>"
+ +"<li><b>白天不动晚上动，正常吗？</b>→ 正常，每个宝宝作息不同，自己跟自己比</li>"
+ +"<li><b>上班没空数怎么办？</b>→ 保证每晚固定1小时；周末补做一次两小时法</li>"
+ +"<li><b>数到10次要多久？</b>→ 快则几十分钟，慢则2小时；2小时不满10次就要就医</li>"
+ +"<li><b>家用胎心仪能代替数胎动吗？</b>→ 不能。胎心仪只能听“跳没跳”，只有胎动能反映“宝宝好不好”</li></ul></div></details>"
+ +"</div>";
+ $("#view").innerHTML=html;
+}
 $("#tabs").addEventListener("click",e=>{
  const b=e.target.closest(".tab");if(!b)return;
  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
  const v=b.dataset.v;
- try{history.replaceState(null,"",v==="all"?"#":"#"+v);}catch(err){}
+ try{history.replaceState(null,"","#"+v);}catch(err){}
  if(v==="gz"){renderGZ();window.scrollTo({top:0});}
  else if(v==="med"){renderMed();window.scrollTo({top:0});}
  else if(v==="diet"){renderDiet();window.scrollTo({top:0});}
+ else if(v==="fetal"){renderFetal();window.scrollTo({top:0});}
  else renderAll(v); /* 产检/大事/趣事：按筛选渲染 */
 });
 renderHero();renderAll("checkup");
