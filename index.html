@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#B5496B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>孕期手账 · 宝贝计划（广州版）</title>
+<style>
+:root{
+  --paper:#FFF8F2; --card:#FFFFFF; --ink:#4A2B38; --ink2:#7A5A66; --line:#F0DCCE;
+  --rose:#B5496B; --rose-d:#98405C; --rose-l:#FBE4EC; --peach:#F2B08C; --peach-l:#FAEEDC;
+  --sage:#5F8F74; --sage-l:#E5F1E9; --sky:#4E7FAC; --sky-l:#E3EDF7; --gray:#8A8A8A;
+  --serif:Georgia,"Songti SC","STSong","Noto Serif SC", SimSun, serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --tabbar:58px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* 隐藏系统滚动条：整页按移动 App 风格设计，不需要出现灰条/灰色块 */
+::-webkit-scrollbar{display:none;width:0;height:0}
+html{scrollbar-width:none;-ms-overflow-style:none}
+html{font-family:var(--sans);color:var(--ink);background:var(--paper)}
+body{min-height:100vh;background:var(--paper);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:
+  radial-gradient(420px 320px at 88% -6%, rgba(242,176,140,.30), transparent 62%),
+  radial-gradient(380px 300px at -10% 28%, rgba(181,73,107,.10), transparent 60%),
+  radial-gradient(420px 380px at 105% 78%, rgba(95,143,116,.10), transparent 60%);
+  pointer-events:none;z-index:0}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.35 0 0 0 0 0.35 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:2;max-width:460px;width:100%;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(30px + env(safe-area-inset-bottom))}
+
+/* ---------- hero ---------- */
+.hero{border-radius:22px;padding:22px 18px 18px;color:#FFF;background:
+  linear-gradient(150deg,#C25577 0%, #A94363 55%, #8F3554 100%);
+  box-shadow:0 14px 34px -12px rgba(143,53,84,.55), inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;overflow:hidden;animation:rise .6s ease both}
+.hero::after{content:"✦";position:absolute;right:-14px;top:-26px;font-size:110px;opacity:.14;transform:rotate(14deg)}
+.hero h1{font-family:var(--serif);font-size:25px;font-weight:700;letter-spacing:.04em;margin:6px 0 2px}
+.bigrow{display:flex;align-items:flex-end;gap:14px;margin:16px 0 4px}
+.bigrow .wk{font-family:var(--serif);font-size:44px;line-height:1;font-weight:700}
+.bigrow .wk small{font-size:16px;font-weight:600;margin-left:2px;opacity:.9}
+.bigrow .cnt{margin-left:auto;text-align:right;white-space:nowrap}
+.bigrow .cnt b{font-size:22px;font-family:var(--serif)}
+.bigrow .cnt span{display:block;font-size:11px;opacity:.85;margin-top:2px;letter-spacing:.08em}
+.statgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:13px;padding:8px 10px}
+.stat small{display:block;font-size:11px;opacity:.95;margin-bottom:3px;letter-spacing:.04em}
+.stat b{font-size:13.5px;font-weight:700;white-space:nowrap}
+.stat.hl{background:rgba(255,216,107,.16);border:1px solid rgba(255,216,107,.55)}
+.stat .pctv{font-size:19px;color:#FFD86B;text-shadow:0 1px 2px rgba(0,0,0,.18);display:block;line-height:1.15}
+.stat b em{font-style:normal;font-size:11px;opacity:.9}
+.next{margin-top:14px;background:rgba(255,255,255,.16);border:1px dashed rgba(255,255,255,.45);border-radius:12px;
+  padding:9px 12px;font-size:12.5px;display:flex;align-items:center;gap:8px}
+.next .dot{width:8px;height:8px;border-radius:50%;background:#FFD86B;box-shadow:0 0 0 4px rgba(255,216,107,.25);flex:none;animation:pulse 2.2s infinite}
+.next b{font-weight:700}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- tabs ---------- */
+.tabs{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(255,248,242,.96),rgba(255,248,242,.88) 78%,transparent);
+  padding:10px 0 12px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%}
+.tab{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 2px;font-size:11.5px;font-weight:600;color:var(--ink2);
+  text-align:center;cursor:pointer;transition:.25s;box-shadow:0 2px 6px rgba(160,90,110,.06);min-width:0;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;outline:none}
+.tab:focus-visible{outline:2px solid rgba(181,73,107,.55);outline-offset:2px}
+.tab.on{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 3px 9px -4px rgba(143,53,84,.5)}
+.tab:active{transform:scale(.95)}
+
+/* ---------- groups & cards ---------- */
+.grp{margin-top:18px;position:sticky;top:var(--tabbar);z-index:10}
+.grp h2{font-family:var(--serif);font-size:17px;display:flex;align-items:baseline;gap:8px;padding:7px 12px;border-radius:12px;
+  background:linear-gradient(90deg,#FCE9EF,#FDF3EC);color:var(--rose-d);border:1px solid #F4DCE2}
+.grp h2 span{font-size:11px;color:var(--ink2);font-weight:500;font-family:var(--sans)}
+.card{background:var(--card);border:1px solid var(--line);border-left-width:4px;border-radius:15px;padding:13px 13px 12px;
+  margin-top:10px;box-shadow:0 4px 14px -8px rgba(160,90,110,.18);animation:rise .5s ease both;animation-delay:calc(var(--i)*22ms)}
+.card.today{border-color:var(--rose);box-shadow:0 0 0 2px rgba(181,73,107,.18), 0 8px 20px -10px rgba(181,73,107,.35);position:relative}
+.card.today::before{content:"今天";position:absolute;right:-1px;top:-1px;background:var(--rose);color:#fff;font-size:10px;
+  font-weight:700;padding:3px 9px;border-radius:0 14px 0 12px;letter-spacing:.08em}
+.card .meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.card .dt{font-size:12px;font-weight:700;color:var(--rose-d);font-family:var(--serif)}
+.card .wk{font-size:11px;color:var(--ink2)}
+.chip{font-size:10px;font-weight:700;letter-spacing:.1em;padding:2.5px 8px;border-radius:99px}
+.chip.checkup{background:var(--sky-l);color:var(--sky)}
+.chip.big{background:var(--rose-l);color:var(--rose-d)}
+.chip.fun{background:var(--sage-l);color:var(--sage)}
+.chip.base{background:#F0EFEF;color:var(--gray)}
+.card h3{font-size:15px;margin-top:7px;font-weight:700;letter-spacing:.01em;line-height:1.45}
+.card .desc{font-size:12.5px;color:var(--ink2);line-height:1.65;margin-top:5px}
+.card .tip{font-size:11.5px;color:var(--ink2);background:#FBF4EE;border-radius:9px;padding:7px 9px;margin-top:8px;line-height:1.6}
+.card .tip b{color:var(--rose-d)}
+
+/* ---------- gz page ---------- */
+.gz-lead{font-size:12.5px;color:var(--ink2);line-height:1.7;margin-top:4px}
+.alist{margin-top:14px}
+.aitem{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-top:9px;
+  display:flex;gap:10px;align-items:flex-start;animation:rise .5s ease both;animation-delay:calc(var(--i)*30ms)}
+.aitem .no{flex:none;width:24px;height:24px;border-radius:50%;background:var(--rose-l);color:var(--rose-d);font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;font-family:var(--serif);margin-top:1px}
+.aitem .body{flex:1}
+.aitem .tt{font-size:13.5px;font-weight:700;color:var(--ink)}
+.aitem .dd{font-size:11.8px;color:var(--ink2);line-height:1.6;margin-top:3px}
+.acc{margin-top:12px}
+details{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-top:9px;overflow:hidden}
+summary{list-style:none;padding:12px 14px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:17px;color:var(--rose);transition:.25s}
+details[open] summary::after{transform:rotate(45deg)}
+details .in{padding:2px 14px 13px;font-size:12.3px;color:var(--ink2);line-height:1.75}
+details .in li{margin:5px 0 5px 16px}
+details .in b{color:var(--rose-d)}
+
+/* ---------- med page ---------- */
+.med-lead{margin-top:4px;background:linear-gradient(90deg,#FDF1EC,#FCF6EE);border:1px solid #F3D9CC;border-radius:14px;
+  padding:12px 13px;font-size:12.5px;color:var(--ink2);line-height:1.75}
+.med-lead b{color:#B04A32}
+.med-lead .r{display:flex;gap:8px;margin-top:9px}
+.med-lead .r span{flex:1;background:#fff;border:1px solid #F3DDD1;border-radius:10px;padding:7px 9px;font-size:11px;line-height:1.65}
+.mitem{border:1px solid var(--line);border-left-width:3px;border-left-color:var(--sage);border-radius:11px;
+  padding:9px 11px;margin:9px 0;background:var(--card);animation:rise .5s ease both;animation-delay:calc(var(--i)*18ms)}
+.mitem.doc{border-left-color:var(--sky)}
+.mitem.no{border-left-color:#D2694B;background:#FDF4F0}
+.mn{font-size:13px;font-weight:700;color:var(--ink);line-height:1.4}
+.mtag{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px;letter-spacing:.04em;white-space:nowrap}
+.mtag.ok{background:var(--sage-l);color:var(--sage)}
+.mtag.doc{background:var(--sky-l);color:var(--sky)}
+.mtag.no{background:#FBE3DD;color:#B04A32}
+.mtag.limit{background:#FBF0DA;color:#B07A2E}
+.mitem.limit{border-left-color:#DCA45C}
+.mu{font-size:11.8px;color:var(--ink2);line-height:1.7;margin-top:4px}
+.mt{font-size:11px;line-height:1.65;color:#A5452F;background:#FBEEE9;border-radius:8px;padding:6px 9px;margin-top:7px}
+.ccnt{font-size:10.5px;color:var(--ink2);font-weight:600;margin:0 2px}
+.mednote{text-align:center;font-size:10.5px;color:var(--ink2);opacity:.85;line-height:1.8;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>孕期手账</h1>
+    <div class="bigrow">
+      <div class="wk"><span id="wk">孕4周+4天</span><small>当前</small></div>
+      <div class="cnt"><b id="remain">248</b><span>天 后见宝宝</span></div>
+    </div>
+    <div class="statgrid">
+      <div class="stat"><small>预产期</small><b id="due">2027-05-01</b></div>
+      <div class="stat"><small>受孕日</small><b id="conc">2026-08-08</b></div>
+      <div class="stat hl"><small>孕期进度</small><b class="pctv" id="pct">11%</b></div>
+    </div>
+    <div class="next"><span class="dot"></span><div id="nextTxt">下次关键产检：正在计算…</div></div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-v="checkup">产检</button>
+    <button class="tab" data-v="big">大事</button>
+    <button class="tab" data-v="fun">趣事</button>
+    <button class="tab" data-v="gz">广州办事</button>
+    <button class="tab" data-v="med">常备药</button>
+    <button class="tab" data-v="diet">忌口</button>
+  </nav>
+
+  <main id="view"></main>
+
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const TYPES={checkup:{cls:"checkup",label:"产检"},big:{cls:"big",label:"大事"},fun:{cls:"fun",label:"趣事"},base:{cls:"base",label:"基准"}};
+const PHASES=[[0,"🌱 孕早期"],[98,"🦋 孕中期"],[196,"🎉 孕晚期"],[287,"👶 产后 & 宝宝"]];
+
+/* ---------- 数据（含广州特色，与 Excel 版一致） ---------- */
+const ITEMS=[
+ {d:[0],w:"孕0周",t:"base",ti:"末次月经第一天（推算起点）",de:"预产期 = 末次月经 + 280 天，整个孕期的“计时器”",tip:"末次月经 2026-07-25，所有日期以此为基准推算"},
+ {d:[14],w:"孕2周",t:"big",ti:"🌱 受孕日：小种子平安落地",de:"8月8日当天排卵受精（房事日=排卵日），约1周后着床",tip:"宝宝生命的起点，加进你们两人的“纪念日”清单"},
+ {d:[28],w:"孕4周",t:"big",ti:"验孕棒“两条杠”！",de:"例假推迟约1周，晨尿测出 hCG",tip:"惊喜时刻！拍照留念；下一步去医院抽血确认（见下条）"},
+ {d:[28,42],w:"孕4-6周",t:"checkup",ti:"🩸 抽血确认：血hCG + 孕酮（早孕抽血）",de:"验孕棒阳性后尽早抽血：查血β-hCG与孕酮，确认宫内妊娠并评估发育情况；hCG隔48小时复查、翻倍良好是“好苗头”",tip:"初诊一般同查血常规、血型、甲功（TSH）——甲功异常需孕早期干预，发现怀孕就查别拖；孕酮偏低先别慌，以医生综合判断为准"},
+ {d:[35],w:"孕5周",t:"big",ti:"📄 办“生育登记”+ 选定产检医院",de:"粤省事/穗好办在线办生育登记（领凭证）；确定1家定点医院作产检医院",tip:"穗好办“生育保险待遇申领一类事”按孕周推送提醒，全程线上办"},
+ {d:[42],w:"孕6周",t:"big",ti:"第一张“宝宝照片”",de:"孕囊-胚芽-胎心“三件套”，第一次看见TA",tip:"打印出来，收进纪念册"},
+ {d:[42,56],w:"孕6-8周",t:"checkup",ti:"首次B超：确认宫内妊娠+胎心搏动",de:"排除宫外孕，确认孕囊与原始心管搏动",tip:"腹部B超需憋尿；广州健康通“穗好孕”可同步建档、领免费筛查券"},
+ {d:[49,77],w:"孕8-11周",t:"fun",ti:"🤢 孕吐“体验卡”开启",de:"激素高峰，嗅觉变灵、口味突变、爱犯困",tip:"少食多餐、备苏打饼干/柠檬水；<b>广式凉茶（廿四味等）孕妈忌饮</b>，叶酸别停"},
+ {d:[62],w:"孕8周+6天",t:"fun",ti:"🥮 广式中秋：双黄莲蓉+炒田螺",de:"9月25日中秋，八月十五老广例牌：剥芋头、炒田螺、赏月——孕期吃熟的",tip:"低糖月饼浅尝；芋头田螺煮透；饭后江边“睇月光”散步"},
+ {d:[63,77],w:"孕9-11周",t:"checkup",ti:"复查B超（如首次未见胎心）",de:"胎心一般在6-8周出现，不急，一周后复查",tip:"若首次已见胎心则跳过此项"},
+ {d:[68],w:"孕9周+5天",t:"fun",ti:"🇨🇳 国庆：宝宝第一个假期",de:"国庆长假“带娃”短途游，老广最爱的“饮茶+游园”",tip:"选短途，避免劳累、拥挤、生食；湿热的广州注意防暑"},
+ {d:[77,97],w:"孕11-13周+6",t:"checkup",ti:"★ 医院产检建档 + NT + 首次全面产检",de:"在选定的产检医院正式建档（产检本），此后每次产检都记入此档案；NT超声(11-13+6)查染色体筛查；血尿常规、血型、肝肾功能、甲功、传染病筛查、心电图",tip:"广州：广东户籍/持居住证孕妇可享<b>免费NT</b>（健康通领券）；凭社区《母子健康手册》到医院产科建档；提前电话预约，带身份证、医保卡"},
+ {d:[84,91],w:"孕12-13周",t:"big",ti:"第一次听到胎心音！",de:"多普勒胎心像“小火车”轰隆轰隆",tip:"领“母子健康手册”，建议把胎心音录下来"},
+ {d:[84],w:"孕12周",t:"checkup",ti:"社区免费早孕建卡 + 医保产检选点",de:"12+6周前到社区卫生服务中心建卡（血常规、血型、尿常规、肝肾功能、乙肝两对半、梅毒HIV免费初查）；穗好办选定产检定点医院",tip:"免费项目含5次产前随访+至少1次产后访视；<b>未选点产检报销降低10个百分点</b>"},
+ {d:[105,140],w:"孕15-20周",t:"checkup",ti:"★ 唐氏筛查 或 无创DNA（二选一）",de:"中唐15-20+6周；无创12-22+6周（建议15-20周）；广州：<35岁且NT正常可免费中唐（健康通领券）",tip:"年龄≥35岁建议直接无创或羊穿；<b>符合指征的无创DNA由广州生育保险全额报销</b>"},
+ {d:[109],w:"孕15周+4天",t:"fun",ti:"🛒 双十一：母婴囤货节",de:"孕妈最精明的时刻，待产包、尿不湿、婴儿床",tip:"先列清单再下单，别冲动消费（要留理货空间）"},
+ {d:[112,140],w:"孕16-20周",t:"big",ti:"🦋 第一次胎动",de:"像小鱼吐泡泡、蝴蝶扇翅膀；初产妇约18-20周",tip:"夜深人静最清晰；记下第一次胎动的日期"},
+ {d:[140],w:"孕20周",t:"big",ti:"孕程过半！肚子显怀",de:"进入最舒服的“黄金中期”",tip:"拍张显怀对比照，记录腰围变化"},
+ {d:[140,154],w:"孕20-22周",t:"checkup",ti:"★ 大排畸系统B超（建议20-22周）",de:"颅脑、心脏、脊柱、四肢、内脏全面结构检查；广州：18-24周II级超声筛查符合条件免费",tip:"四维彩超另约；宝宝不配合就爬楼、吃块巧克力"},
+ {d:[140,182],w:"孕20-26周",t:"fun",ti:"📸 孕妇照最佳档期",de:"26-32周肚型最圆润好看，20-30周都能拍",tip:"提前预约，拉上准爸爸（和宠物）一起拍"},
+ {d:[153],w:"孕21周+6天",t:"fun",ti:"🎄 圣诞节：宝宝第一个圣诞",de:"胎宝听力开始发育，能“听”见节日歌曲",tip:"放首圣诞歌当胎教音乐"},
+ {d:[160],w:"孕22周+6天",t:"fun",ti:"🎆 元旦：肚子里的跨年",de:"三口之家“提前”一起跨年",tip:"拍一张孕肚照+烟花合影"},
+ {d:[168,196],w:"孕24-28周",t:"checkup",ti:"★ OGTT 糖耐量试验（建议25-26周）",de:"空腹抽血→喝75g糖水→1小时、2小时再抽血，筛查妊娠期糖尿病",tip:"前3天正常饮食；前一晚8点后禁食；带本书打发2小时"},
+ {d:[175],w:"孕25周",t:"checkup",ti:"常规产检 + 血常规复查",de:"筛查孕期贫血（血红蛋白<110 g/L需补铁）",tip:"补铁剂遵医嘱，搭配维C同食吸收更好"},
+ {d:[196],w:"孕28周",t:"big",ti:"🧧 春节=孕晚期 · 广州行花街",de:"2月6日春节当天正好满28周；花城过年“大肚行花街”买年花，桃花金桔“大吉大利”",tip:"避开人流高峰（花市除夕最挤）；拍“全家福+孕肚”春节合影，红包先给娃存着"},
+ {d:[196,224],w:"孕28-32周",t:"checkup",ti:"小排畸B超 + 生长评估（建议30-32周）",de:"评估宝宝发育、羊水、胎盘、脐带与胎位",tip:"32周后胎位基本固定；头位=顺产好信号"},
+ {d:[204],w:"孕29周+1天",t:"fun",ti:"❤️ 情人节：三人行的第一个情人节",de:"肚子里多了一位“小情人”",tip:"给妈妈和宝宝各准备一份礼物"},
+ {d:[210],w:"孕30周",t:"checkup",ti:"常规产检",de:"血压、体重、宫高腹围、胎心、尿常规",tip:"每天早中晚各数1小时胎动，养成习惯"},
+ {d:[224],w:"孕32周",t:"checkup",ti:"常规产检 + 心电图复查",de:"孕晚期心脏负荷大，复查心电图",tip:"胎动标准：2小时内≥10次；异常随时就医"},
+ {d:[226],w:"孕32周+2天",t:"fun",ti:"💐 第一个“准妈妈”妇女节",de:"从女生到妈妈身份的“节庆确认”",tip:"犒劳自己一顿好的，和产检假"},
+ {d:[238,287],w:"孕34-41周",t:"checkup",ti:"★ 胎心监护 NST：每周一次",de:"监测胎心-胎动-宫缩曲线，评估宫内状况",tip:"垫上“平安符”（监护带）；吃点甜的防宝宝睡着"},
+ {d:[245,259],w:"孕35-37周",t:"checkup",ti:"GBS 无乳链球菌筛查（建议36周）",de:"阴道分泌物检查；阳性者分娩时用抗生素",tip:"阳性率约10-30%，完全可控，别紧张"},
+ {d:[252],w:"孕36周",t:"checkup",ti:"B超：胎位 + 胎儿体重 + 脐带",de:"为分娩方式做参考",tip:"头位且体重适宜 = 顺产好条件；胎位不正可咨询外倒转"},
+ {d:[259],w:"孕37周",t:"big",ti:"🎉 足月啦！宝宝随时可能发动",de:"37-41周均为足月分娩；此后每周产检",tip:"待产包放玄关，证件带齐；“卸货预备会议”开一次"},
+ {d:[266],w:"孕38周",t:"checkup",ti:"每周产检 + 胎心监护",de:"检查宫颈成熟度、胎位、入盆情况",tip:"留意见红、破水、规律宫缩"},
+ {d:[266],w:"孕38周",t:"fun",ti:"🥚 广府“催生”礼 + 猪脚姜预备",de:"老一辈送鸡蛋、补品“催生”；甜醋老姜备起，广式月子标配",tip:"提前向家婆/妈妈讨教姜醋秘方；红鸡蛋+利是，满月大吉"},
+ {d:[266,280],w:"孕38-40周",t:"fun",ti:"假性宫缩“狼来了”游戏",de:"不规律、不加重、休息后消失，是“演习”",tip:"真宫缩：规律+越来越痛+5分钟一次 → 出发去医院"},
+ {d:[273],w:"孕39周",t:"checkup",ti:"每周产检 + 胎心监护",de:"再次评估能否阴道分娩",tip:"每天散步催产，但别逞强；早睡储备体力"},
+ {d:[280],w:"孕40周",t:"big",ti:"🎂 预产期 = 5月1日 劳动节！",de:"只有约5%宝宝在预产期当天出生，±2周都正常",tip:"“劳动节宝宝”太应景，小名可以备几个候选"},
+ {d:[287],w:"孕41周",t:"checkup",ti:"若仍未发动：41-41+3周住院引产",de:"超过41周不推荐继续等待，需终止妊娠",tip:"全程监护，听主管医生的安排，别焦虑"},
+ {d:["txt","分娩当日"],w:"分娩日",t:"big",ti:"🤱 见面时刻：宝宝出生",de:"顺产 / 剖宫产都是伟大的胜利；2026年7月起广州住院安胎（先兆早产等）零起付、目录内100%报销",tip:"老广报喜：姜醋香起、红鸡蛋派街坊；剪脐带、按脚印、早接触早吸吮"},
+ {d:["txt","产后1周"],w:"产后1周",t:"big",ti:"👶 “出生一件事”：出生证→落户→医保",de:"穗好办/粤省事联办：出生医学证明、户口登记、新生儿参保、社保卡；180天内凭出生证参保",tip:"出生即参保，出生以来费用可追溯报销；职工医保个人账户可绑定宝宝缴医保费"},
+ {d:["txt","产后42天"],w:"产后42天",t:"big",ti:"产后42天复查 + 出月子",de:"子宫复旧、盆底肌评估、伤口与乳腺检查；广州社区免费产后访视（≥1次）+42天检查",tip:"老公的活：提前给老婆约好复查号、准时陪同——妈妈也是“病人”，别只盯着宝宝"},
+];
+const GZ=[
+ ["生育登记","粤省事/穗好办在线办（怀孕后尽早），凭证备好，后续选点、报销都要用"],
+ ["产检选点（必办）","穗好办“产前检查定点医疗机构选定”，只选1家定点医院；未选点产检报销降10个百分点；分娩无需备案"],
+ ["免费筛查券（必领）","微信“广州健康通”→“穗好孕”建档领券（2-3天审核）→定点机构：NT、唐筛、大排畸、地贫全程免费（广东户籍或持广东省居住证）"],
+ ["社区建卡（免费）","孕12+6周前到居住地/户籍地社区卫生服务中心建卡，初查免费 + 5次产前随访 + ≥1次产后访视"],
+ ["生育津贴","顺产98天 = 单位上年度月均缴费工资÷30×98；2025年起可直发个人（免个税）；津贴低于原工资由单位补差；穗好办全程网办"],
+ ["产假天数","顺产98天 + 奖励假80天（单位照发工资，无津贴）；孕期产检视同出勤、不扣工资；宝爸陪产假15天"],
+ ["住院安胎","晚期先兆流产/宫颈功能不全/先兆早产等住院，零起付、目录内100%报销——该住院别硬扛"],
+ ["无创DNA","符合医学指征的NIPT由生育保险全额报销（2025年全省统一定价560元）"],
+ ["新生儿“出生即参保”","出生后180天内凭《出生医学证明》参保（穗好办“新生儿出生一件事”90天内联办：落户+参保+社保卡），自出生之日起费用可追溯报销；职工医保个人账户可绑定宝宝缴费"],
+ ["新生儿免费筛查","助产机构即做——代谢病4种（含G6PD蚕豆病）+听力，<37周加视网膜；免费叶酸可到社区/定点医院领取"],
+];
+const ACC=[
+ ["🧳 待产包（37周前备齐）",["妈妈：产褥垫2包、安心裤、哺乳内衣3件、开襟睡衣2套、月子袜、洗漱用品、保温吸管杯、能量零食、胎监带2条","宝宝：NB尿不湿、和尚服3件、包被2条、口水巾、婴儿湿巾、小罐奶粉+小奶瓶、胎帽、护臀膏（按医院清单核对）"]],
+ ["📋 建档 & 住院证件",["夫妻双方身份证、户口本、医保卡、结婚证","《母子健康手册》+ 所有产检报告","住院押金/银行卡、手机+充电宝"]],
+ ["🫰 数胎动（孕28周起）",["每天早、中、晚固定时段各数1小时","每小时≥3次，或2小时累计≥10次为正常","胎动明显减少 / 突然剧烈 → 别犹豫，立即就医"]],
+ ["🚨 紧急就医信号",["阴道流血、剧烈腹痛、破水（流液，不论多少）","规律宫缩（约5分钟一次、越来越痛）","胎动明显减少、持续头痛眼花、发热、皮肤瘙痒加重"]],
+ ["💊 营养补充（遵医嘱）",["叶酸 0.4mg/天：孕前3个月 ~ 孕12周","钙约600mg/天：孕16-20周起；铁剂：血常规提示贫血时；DHA、维生素D：孕中期起","所有补充剂以产检医生意见为准"]],
+];
+/* 孕期常备药：常见不适的相对安全用药参考（非处方、局部外用、营养类为主），具体以产科医生/药师意见为准 */
+const MED=[
+ {cat:"🤧 感冒 & 发热",items:[
+  {n:"对乙酰氨基酚（扑热息痛）",g:"ok",tag:"孕全期可用",
+   u:"适用：发热＞38.5℃、头痛、咽痛。退烧止痛首选单方片剂，一次0.5g、间隔≥4-6小时，24小时内不超过2g。",
+   t:"只认准“对乙酰氨基酚”单一成分；含伪麻黄碱、右美沙芬、氯苯那敏的复方感冒药成分复杂，孕期别碰；体温＜38.5℃先用温水擦身、多喝水物理降温。"},
+  {n:"生理性海水鼻喷雾 / 滴鼻剂",g:"ok",tag:"孕全期可用",
+   u:"适用：感冒鼻塞、鼻干、过敏性鼻炎。喷鼻每日2-4次，不含药物成分、不通过胎盘。",
+   t:"要选“生理性海水”款；含血管收缩剂的喷鼻药（羟甲唑啉、赛洛唑啉类）说明书明确孕妇禁用，且连续用会产生依赖，孕期别碰。"},
+  {n:"蜂蜜水 / 柠檬水 / 葱姜水（食疗）",g:"ok",tag:"孕全期可用",
+   u:"适用：鼻塞流涕、喉咙干痒的辅助缓解。温蜂蜜水含服润喉镇咳。",
+   t:"血糖偏高者蜂蜜减量；葱姜水只适合风寒受凉初期；广州湿热天风热感冒别用姜汤，症状持续尽早就医。"},
+  {n:"布洛芬 / 双氯芬酸（NSAIDs）",g:"no",tag:"孕期避免",
+   u:"常见退烧止痛药，孕期不推荐：孕早期与流产风险相关，孕晚期可致胎儿动脉导管早闭、羊水减少。",
+   t:"发烧、牙痛、头痛一律先用对乙酰氨基酚；确需NSAIDs（如严重炎性疼痛）必须专科医生评估，孕晚期尤其禁用。"},
+ ]},
+ {cat:"🗣️ 咳嗽 & 咽喉痛",items:[
+  {n:"蜂蜜水 / 冰糖炖雪梨 / 陈皮水",g:"ok",tag:"孕全期可用",
+   u:"适用：干咳、夜咳、咽干。睡前含服一勺蜂蜜对夜间咳嗽效果不错。",
+   t:"血糖偏高者适量；食疗是“润”不是“消炎”，咳嗽超过2周、伴黄痰或发热务必就医。"},
+  {n:"淡盐水 / 复方氯己定含漱液",g:"doc",tag:"遵医嘱",
+   u:"适用：咽喉痛、牙龈肿。每日漱口3-4次，局部使用吸收极少。",
+   t:"选常规非处方含漱液即可；成分含碘或酒精的不确定品种先问药师；咽喉剧痛伴发热→就诊。"},
+  {n:"右美沙芬（干咳药水）",g:"doc",tag:"孕早期禁用",
+   u:"适用：剧烈干咳影响睡眠时。药房常见，短期按说明书使用。",
+   t:"说明书明确：妊娠头3个月内禁用；痰多痰稠者禁用（会把痰“憋”住）；孕中晚期确需使用也先咨询医生，含氨溴索、愈创木酚的祛痰药孕早期不可自行服用。"},
+  {n:"复方甘草片 / 含阿片类止咳糖浆",g:"no",tag:"孕期避免",
+   u:"含可待因、罂粟壳、甘草等成分，长期或大剂量使用有风险。",
+   t:"咳嗽首选蜂蜜、盐水漱口等温和办法；确需用药让医生开具明确安全的品种，别自己囤药水。"},
+ ]},
+ {cat:"🍽️ 拉肚子 & 便秘",items:[
+  {n:"蒙脱石散（思密达）",g:"ok",tag:"孕全期可用",
+   u:"适用：急、慢性腹泻。1袋兑50ml温水，每日3次，空腹服用（饭前1小时或饭后2小时），不被吸收入血、对宝宝安全。",
+   t:"症状好转即减量停用；与铁剂、钙片、维生素间隔2小时以上；腹泻伴发热、血便或明显腹痛立即就医。"},
+  {n:"口服补液盐（ORS III）",g:"ok",tag:"孕全期可用",
+   u:"适用：腹泻、呕吐后的脱水预防。按说明书整包兑水，少量多次慢慢喝。",
+   t:"别只兑半包（电解质浓度不对）；能正常进食且尿量正常可少喝；口渴明显、尿少、头晕乏力→急诊。"},
+  {n:"益生菌（双歧杆菌 / 乳酸杆菌制剂）",g:"ok",tag:"孕全期可用",
+   u:"适用：腹泻后肠道调理、抗生素相关性腹泻（需医生评估）。",
+   t:"选正规品牌、说明书未列孕妇禁忌的产品；属辅助作用，不能替代补液盐。"},
+  {n:"乳果糖口服液",g:"ok",tag:"孕期首选",
+   u:"适用：孕期便秘（最常见）。不被肠道吸收、不刺激肠壁，晨起空腹15-30ml，1-3天见效，可持续使用。",
+   t:"腹胀明显先减量；同时多吃膳食纤维（火龙果、西梅、燕麦）、多喝水、适度走动——这三招比药更重要。"},
+  {n:"聚乙二醇4000（福松）",g:"doc",tag:"短期·遵医嘱",
+   u:"适用：乳果糖不耐受时的替代。每日1袋（10g）冲水空腹服。",
+   t:"不被吸收入血，但说明书提示妊娠期需在医生指导下使用；通便药专家共识建议仅短期缓解（长期使用有电解质紊乱风险）；与其他口服药间隔2小时以上。"},
+  {n:"开塞露（临时应急）",g:"doc",tag:"偶尔应急",
+   u:"适用：多日未排、腹胀难受时临时救急。",
+   t:"只是“肛门救火队”，别频繁使用；长期便秘优先乳果糖+饮食，避免长时间用力屏气（孕期腹压过大对胎儿和痔疮都不友好）。"},
+  {n:"洛哌丁胺（易蒙停）/ 番泻叶 / 比沙可啶",g:"no",tag:"孕期避免",
+   u:"洛哌丁胺（易蒙停）抑制肠道蠕动，孕期数据有限、一般不推荐；番泻叶、大黄、比沙可啶属刺激性泻药。",
+   t:"止泻药别“瞎买”，刺激性泻药可能诱发宫缩；腹泻先蒙脱石+口服补液盐，便秘先乳果糖+饮食。"},
+ ]},
+ {cat:"🤢 孕吐 & 反酸烧心",items:[
+  {n:"维生素B6",g:"ok",tag:"孕全期可用",
+   u:"适用：孕早期恶心、孕吐。每次10-25mg、每日3次，是研究最充分的安全选择。",
+   t:"孕吐是激素反应，按医嘱剂量即可，别自己加量（长期大剂量如>200mg/日可致周围神经炎）；严重到水都喝不进、尿量明显减少或尿酮体阳性→必须就医补液，别硬扛。"},
+  {n:"生姜茶 / 姜糖 / 苏打饼干",g:"ok",tag:"孕全期可用",
+   u:"适用：晨吐、恶心感。姜片泡水或含姜糖；早晨起床前先垫两块苏打饼干再起身。",
+   t:"姜是天然止吐成分，每天几克足够；广式凉茶（廿四味等）含多种草药，孕期别喝。"},
+  {n:"铝碳酸镁（达喜）",g:"doc",tag:"遵医嘱",
+   u:"适用：反酸、烧心、胃胀。餐后1-2片嚼服，中和胃酸起效快。",
+   t:"说明书提示：妊娠头3个月慎用、连续使用不超过7天；长期大剂量有镁铝蓄积风险，症状缓解即停；与铁剂、钙片、维生素间隔2小时；孕晚期烧心加重多是子宫顶到胃，少食多餐最有用。"},
+  {n:"奥美拉唑等质子泵抑制剂",g:"doc",tag:"医生评估",
+   u:"适用：反流严重、烧心影响睡眠时，由医生评估后短期使用（处方药）。",
+   t:"《质子泵抑制剂临床应用指导原则（2020版）》：妊娠期仅难治性、严重GERD可使用，孕早期及备孕前1个月避免使用——别自行购买；促胃动力药（多潘立酮、莫沙必利）孕期不推荐自用。"},
+ ]},
+ {cat:"🧴 孕期湿疹（特应性皮炎，孕晚期高发）",items:[
+  {n:"保湿霜（凡士林 / 维生素E乳 / 尿素软膏）",g:"ok",tag:"外用首选",
+   u:"适用：湿疹全过程的基础护理——修复皮肤屏障、减轻瘙痒。每天至少2次，洗澡后3分钟内趁皮肤微湿厚涂全身。",
+   t:"保湿比涂药更重要（上海卫健委：湿疹皮肤最怕干）！选无香精、无刺激的医用级保湿剂；干裂严重可先用凡士林打底再涂药。"},
+  {n:"弱效外用糖皮质激素（氢化可的松乳膏 0.5%–1%）",g:"doc",tag:"一线外用药",
+   u:"适用：红斑、瘙痒、丘疹的急性期。局部薄涂，每日1–2次，连续不超过1–2周；小面积使用全身吸收极少，国内外指南均支持孕期局部外用低中效激素。",
+   t:"只涂皮损处，避开眼周和破溃处；别怕“激素”——怕的是强效激素：卤米松、倍他米松等强效类孕妇禁止自行使用；效果不佳让医生评估升级，别自己加量。"},
+  {n:"中效激素：丁酸氢化可的松（尤卓尔）/ 糠酸莫米松（艾洛松）",g:"doc",tag:"医生评估",
+   u:"适用：弱效激素无效时，躯干、四肢较厚的皮损。局部薄涂每日1次，一般1–2周内；药师共识：可短期使用，但必须在医生指导下进行。",
+   t:"说明书：孕妇及哺乳期妇女慎用（非禁用）、皮肤破损者禁用、合并皮肤感染需咨询医师、用药1周无效应咨询——虽属非处方，孕期也请先让医生评估；面部、腋窝、腹股沟等薄嫩部位避免自行使用；长期用可致皮肤变薄、色素沉着。"},
+  {n:"⚠️ 醋酸曲安奈德尿素乳膏",g:"no",tag:"孕妇禁用",
+   u:"常见于慢性湿疹、皮肤肥厚粗糙的“老”皮损。曲安奈德属中效激素，尿素有促渗透作用、吸收更快；但说明书【禁忌】明确：孕妇（特别是妊娠3个月内）禁用，哺乳期禁用。",
+   t:"孕期湿疹请用氢化可的松、糠酸莫米松等弱中效激素并遵医嘱；家里有这管药孕期先收起来。不同品牌说明书或有差异，以实际说明书为准——无论哪种，孕期都不要自行使用，确需用药让医生开。"},
+  {n:"吡美莫司 / 他克莫司（钙调神经磷酸酶抑制剂）",g:"doc",tag:"医生评估",
+   u:"适用：面部、颈部等不适合长期用激素的部位，或对激素不耐受时作为替代（非激素类，不会让皮肤变薄）。",
+   t:"孕期安全数据有限，不作为首选；需皮肤科医生权衡利弊后使用；用药期间注意防晒；别自己网购“无激素神药”——成分不明的药膏常含强效激素、重金属或冰片麝香，风险更大。"},
+  {n:"炉甘石洗剂 / 氧化锌软膏（止痒辅助）",g:"ok",tag:"孕全期可用",
+   u:"适用：轻度瘙痒的临时缓解；氧化锌软膏可收敛、减少渗液。",
+   t:"湿疹皮肤干燥时以保湿为主，别只依赖止痒；渗液增多、结痂或黄脓提示感染，立即就医。"},
+  {n:"温水短浴 + 无香沐浴露",g:"ok",tag:"孕全期可用",
+   u:"适用：每天1次，水温32–37℃、时长5–10分钟；浴后3分钟内涂抹保湿锁水。",
+   t:"过热、泡太久会加重湿疹；避开皂基、香精类沐浴产品；洗澡时不用毛巾猛搓。"},
+  {n:"⚠️ 什么情况必须就医",g:"no",tag:"就医信号",
+   u:"渗液结痂、黄脓（继发感染）、红肿热痛、皮疹蔓延到大面积、痒到睡不着、保湿+弱效激素2周无好转。",
+   t:"孕期剧烈瘙痒伴睡眠不足会影响胎儿；中重度湿疹医生会评估窄谱UVB光疗（孕期可在正规医院进行）或口服抗组胺药，别硬扛也别乱涂。"},
+ ]},
+ {cat:"🌿 过敏 & 皮肤瘙痒",items:[
+  {n:"炉甘石洗剂",g:"ok",tag:"外用首选",
+   u:"适用：湿疹、荨麻疹、蚊虫叮咬的止痒。摇匀后涂抹，每日2-3次，几乎不吸收。",
+   t:"避开破溃皮肤；孕晚期特应性皮炎高发，大面积湿疹仍需就诊；荨麻疹伴嘴唇肿、呼吸困难→立即急诊。"},
+  {n:"氯雷他定 / 西替利嗪",g:"doc",tag:"医生评估",
+   u:"适用：过敏性鼻炎、荨麻疹需口服药时，第二代抗组胺药相对安全，每日1片。",
+   t:"孕早期尽量以盐水洗鼻、远离过敏原等物理方法为主；确需用药由医生开，别自己连吃几个月。"},
+  {n:"苯海拉明（第一代抗组胺）",g:"doc",tag:"慎用·非首选",
+   u:"老款抗过敏药，嗜睡明显，孕期安全资料相对少。",
+   t:"说明书提示孕妇慎用（有增加腭裂等畸形风险的描述），孕早期尽量以氯雷他定一类替代；含苯海拉明的感冒药水同样避开，确需使用遵医嘱。"},
+ ]},
+ {cat:"🦟 蚊虫叮咬 & 防蚊（广州必看）",items:[
+  {n:"物理防蚊（首选，最安全）",g:"ok",tag:"孕全期可用",
+   u:"蚊帐+纱窗纱门、外出穿浅色宽松长袖长裤、避开清晨7-9点和傍晚5-7点的草丛水边，空调降温减少出汗最招蚊。",
+   t:"清理家中积水（花盆托盘、闲置瓶罐）是治本之策，但孕妇别亲自弯腰蹲着干，让家人代劳防滑倒；孕妇体温高、呼出二氧化碳多，本来就更容易“招蚊子”，跟体质无关、别自责。"},
+  {n:"化学驱蚊剂：避蚊胺(DEET) 10%–30% / 派卡瑞丁 5%–20% / 驱蚊酯",g:"ok",tag:"孕期可用",
+   u:"EPA、CDC及妇产科协会均认为这三种成分孕期、哺乳期按说明使用是安全的；日常选10%–20%浓度就够，浓度越高只是保护时间更长。",
+   t:"喷/涂在暴露皮肤，避开眼、口和破损皮肤；用后洗手防揉眼；回家后清洗干净再接触宝宝；驱蚊贴、驱蚊手环作用范围太小、效果有限，不推荐当主力。"},
+  {n:"电蚊香液/蚊香片（拟除虫菊酯类）",g:"doc",tag:"有限使用",
+   u:"正规产品的低浓度拟除虫菊酯类风险较低，但属“有限推荐”级别：保持通风、不要整晚使用。",
+   t:"优先物理防蚊；选购正规品牌、看清成分；避免高浓度拟除虫菊酯类产品；皮肤敏感或有哮喘时更要注意通风。"},
+  {n:"叮咬后止痒：肥皂水清洗 + 冷敷 + 炉甘石洗剂",g:"ok",tag:"孕全期可用",
+   u:"用温和肥皂水擦拭叮咬处（中和蚊虫酸性唾液），再冰袋/冷毛巾冷敷10–15分钟，痒得明显可涂炉甘石洗剂。",
+   t:"千万别挠——抓破易感染留疤；包大的别用指甲掐十字；冷敷时毛巾包好，别直接贴冰袋防冻伤。"},
+  {n:"红肿明显时：弱效激素短程（见湿疹篇）",g:"doc",tag:"医生评估",
+   u:"局部红肿、痒得影响睡眠时，可参照湿疹篇在医生指导下短期、小面积使用氢化可的松乳膏（常用1–2次/日、2–3天）。",
+   t:"只涂叮咬红肿处；皮肤抓破、感染（红肿热痛、流脓）时别用激素，直接就医；被蜈蚣、隐翅虫、毒蜂蜇伤请按虫种处理并尽快就诊。"},
+  {n:"⚠️ 风油精、清凉油、青草膏、万金油（含樟脑/薄荷脑/冰片）",g:"no",tag:"孕妇避免",
+   u:"这类“老牌止痒神器”多含樟脑、薄荷脑、冰片等成分：说明书多为孕妇慎用/禁用，医生意见是孕早期严格避免，孕中晚期也需评估；皮肤破损、溃疡者禁用。",
+   t:"广州药监提醒：孕妇、新生儿不能随意用风油精（樟脑代谢差易蓄积）——蚊虫叮咬请用肥皂水+冷敷+炉甘石；买任何止痒膏先看成分配方表。"},
+  {n:"🚨 广州/广东：登革热季节识别信号",g:"no",tag:"就医信号",
+   u:"被蚊咬后突发高热不退 + 出疹 + 剧烈骨节酸痛（登革热典型“三痛三红”），尤其夏秋季和东南亚/广东周边旅行归来14天内。",
+   t:"疾控指南：退烧止痛首选对乙酰氨基酚；<b>严禁阿司匹林、布洛芬等NSAIDs（增加出血风险，登革热尤忌）</b>，也不用激素退烧；孕妇疑似感染尽早就医并主动告知旅行史；发病5天内睡蚊帐隔离防传播家人。"},
+ ]},
+ {cat:"🍑 痔疮 & 会阴不适（孕晚期高发）",items:[
+  {n:"温水坐浴",g:"ok",tag:"孕全期可用",
+   u:"适用：痔疮肿痛、瘙痒。约40℃温水坐浴10-15分钟，每日1-2次，便后更佳。",
+   t:"水温别过烫；孕晚期注意防滑、别泡太久；痔疮出血多或脱出→产科/肛肠科就诊。"},
+  {n:"复方角菜酸酯栓（太宁）",g:"doc",tag:"医生评估用",
+   u:"适用：内痔、肛裂的疼痛与出血。每日1次、便后塞肛，局部作用、吸收极少（含角菜酸酯与利多卡因）。",
+   t:"孕早期优先温水坐浴等非药物方式；孕中晚期症状明显时在医生评估下谨慎、短期使用（一般不超1周）；塞入动作要轻；含麝香、冰片的痔疮膏孕期避免自用。"},
+ ]},
+ {cat:"🩹 小伤口 & 皮肤小感染",items:[
+  {n:"碘伏",g:"ok",tag:"孕全期可用",
+   u:"适用：擦伤、小切口消毒。棉签蘸取涂抹，每日1-2次（仅用于小面积皮肤黏膜）。",
+   t:"比酒精刺激性小；别与红药水（汞溴红）同用；伤口红肿化脓、伴发热→就医。"},
+  {n:"莫匹罗星软膏（百多邦）/ 红霉素软膏",g:"doc",tag:"局部短期用",
+   u:"适用：毛囊炎、小脓疱、轻微皮肤感染。薄涂每日2-3次，连用不超过5-7天。",
+   t:"说明书提示孕妇应在医生指导下使用，大面积皮肤损伤、肾功能不全者慎用；外用药吸收极少，短期局部使用相对安全；范围大或2-3天无好转→皮肤科就诊，别自行口服抗生素。"},
+ ]},
+ {cat:"💊 营养补充（遵医嘱，别乱嗑）",items:[
+  {n:"叶酸",g:"ok",tag:"必须按时吃",
+   u:"孕前3个月至孕12周 0.4mg/日（免费叶酸可到社区卫生服务中心/定点医院领取），预防神经管缺陷；孕中晚期可遵医嘱续服或改复合维生素。",
+   t:"复合维生素一般每日1粒就够，补过头没好处。"},
+  {n:"钙 / 铁 / 维生素D / DHA",g:"doc",tag:"遵医嘱",
+   u:"何时补、补多少由产检化验决定：血常规提示贫血→补铁剂（配维C同服吸收更好）；孕16-20周起可补钙约600mg/日。",
+   t:"铁剂与钙、牛奶、茶、咖啡错开时间；所有补充剂以产检医生意见为准，别跟风海淘。"},
+ ]},
+ {cat:"❌ 孕期用药黑名单（看到就绕开）",items:[
+  {n:"布洛芬、双氯芬酸等消炎止痛药（NSAIDs）",g:"no",tag:"孕期避免",
+   u:"孕早期：与流产风险相关；孕晚期：可致胎儿动脉导管早闭、羊水减少。",
+   t:"退烧止痛统一找“对乙酰氨基酚”；牙痛、扭伤等确需止痛先咨询医生。"},
+  {n:"复方感冒药（XX感冒灵、日夜百服咛等）",g:"no",tag:"孕期避免",
+   u:"多含伪麻黄碱（收缩血管、影响胎盘血流）、右美沙芬、氯苯那敏、咖啡因等一堆成分。",
+   t:"症状再多也别喝复方药水——发烧吃对乙酰氨基酚、鼻塞用生理海水、咳嗽用蜂蜜，按症状挑单药，不确定问药师。"},
+  {n:"含麝香、雄黄、红花、益母草等成分的中成药",g:"no",tag:"孕期避免",
+   u:"如牛黄解毒片、云南白药（口服）、调经类中成药、含麝香的痔疮膏等。",
+   t:"中成药也要看成分表！藿香正气水含高浓度酒精，孕期禁用；无酒精的口服液/胶囊仍含生半夏，孕早期严禁、孕中晚期需医生评估；广式凉茶（廿四味、王老吉类）含多种草药，孕期少喝或不喝。"},
+  {n:"维A酸类（异维A酸、维A酸软膏、阿达帕林）",g:"no",tag:"孕期禁用",
+   u:"明确致畸：口服异维A酸用药期间及停药后至少1个月必须严格避孕（遵医嘱，部分指南建议3个月），外用药膏孕全期避免。",
+   t:"治痘、治斑请主动告知医生备孕或怀孕状态，让医生换用安全成分。"},
+  {n:"处方药：抗生素、激素、降压药等",g:"no",tag:"必须医生开",
+   u:"青霉素、头孢类等有孕期相对安全的品种，但普通感冒用不上。",
+   t:"别找朋友“借药”、别吃剩药；细菌感染等需医生评估后开药，就诊时主动告知孕周。"},
+ ]},
+];
+
+/* 孕期忌口：按“坚决不吃 / 少吃 / 适量”三级整理，含广式饮食习惯提醒；具体以产检医生个体化建议为准 */
+const DIET=[
+ {cat:"🧊 生冷 & 生食（最危险，一律避开）",items:[
+  {n:"生鱼片、刺身、生腌（潮汕/广式生腌虾蟹血蛤）",g:"no",tag:"坚决不吃",
+   u:"寄生虫（肝吸虫、异尖线虫）与李斯特菌风险最高；生腌用酒、姜蒜泡制杀不了菌，淡水鱼生（顺德鱼生、横县鱼生）尤其要避开。",
+   t:"想吃海鲜选彻底煮熟的：白灼虾、清蒸鱼都没问题；日料里的熟食（天妇罗、鳗鱼饭、炸物）可以吃。"},
+  {n:"溏心蛋 / 生鸡蛋 / 生蛋液（寿喜锅蘸蛋、自制蛋黄酱）",g:"no",tag:"坚决不吃",
+   u:"沙门氏菌风险高；鸡蛋要全熟——蛋白蛋黄都凝固才行。",
+   t:"早茶里的窝蛋牛肉粥、生滚蛋花要蛋花全熟；白切鸡、烧腊里“骨髓带血丝”的嫩生部位也别碰。"},
+  {n:"未巴氏消毒的牛奶 / 生羊奶 / 路边现挤奶",g:"no",tag:"坚决不吃",
+   u:"李斯特菌可穿透胎盘，孕期感染后果严重（流产、早产、胎儿感染）。",
+   t:"超市冷藏巴氏奶、常温纯牛奶都安全；酸奶选正规大厂。"},
+  {n:"冰箱放很久的剩菜、隔夜凉菜、冷盘",g:"no",tag:"坚决不吃",
+   u:"李斯特菌嗜冷、冰箱里也会繁殖；剩菜要彻底加热，凉拌菜当天吃完。",
+   t:"家里生熟砧板/刀具分开；冷藏区设定≤4℃、每月清一次。"},
+  {n:"半生熟牛排 / 生菜叶子三明治 / 未洗净的沙拉",g:"no",tag:"坚决不吃",
+   u:"牛排汉堡肉饼都要全熟（well-done）；生蔬果流水冲洗、果蔬净浸泡更放心。",
+   t:"外食沙拉选熟食为主；外食生菜想吃得安心就回家自己洗。"},
+ ]},
+ {cat:"🦈 高汞鱼 & 重金属",items:[
+  {n:"金枪鱼（大目/黄鳍）、剑鱼、鲨鱼、方头鱼、大眼鲷",g:"no",tag:"孕期避免",
+   u:"汞损害胎儿神经系统发育；越是大鱼、长寿鱼汞富集越多。",
+   t:"替代：三文鱼、鳕鱼、沙丁鱼、鲈鱼、虾蟹等低汞鱼，每周2-3份（每份约100g）。"},
+  {n:"鱼头（老火鱼头汤）、鱼皮、鱼内脏",g:"limit",tag:"少吃",
+   u:"重金属易富集在鱼头、鱼皮、内脏；广州人爱煲鱼头汤，孕期宜减量解馋。",
+   t:"吃鱼身肉最安全；老火汤炖久嘌呤高、脂肪多，每周不超1-2次，喝汤别喝油。"},
+  {n:"来历不明的野生鱼 / 鲜度差的鱼",g:"limit",tag:"谨慎",
+   u:"野生鱼可能重金属超标；不新鲜的鱼组胺累积，易过敏甚至中毒。",
+   t:"选大型商超、正规市场的冰鲜/养殖鱼，看检验合格标识。"},
+ ]},
+ {cat:"☕ 咖啡因 & 含糖饮料",items:[
+  {n:"咖啡（速溶、挂耳、美式、拿铁）",g:"limit",tag:"限量",
+   u:"孕全期咖啡因建议总量<200mg/天——约等于1-2杯小杯美式或1杯中杯拿铁，奶茶、可乐、浓茶里的咖啡因也算进去。",
+   t:"实在馋选低因咖啡或小杯；点单时说“single shot”。"},
+  {n:"浓茶 / 功夫茶 / 红茶绿茶",g:"limit",tag:"限量",
+   u:"茶碱影响睡眠，鞣酸妨碍铁吸收；广式早茶一盅两件淡茶可以，浓茶化水不如。",
+   t:"想喝茶选淡的、饭后喝；下午4点后不喝；别和补铁剂同喝。"},
+  {n:"奶茶 / 碳酸饮料 / 功能饮料",g:"limit",tag:"限量",
+   u:"一杯大杯珍珠奶茶咖啡因和糖双双爆表；可乐含磷酸，长期喝不利钙利用；功能饮料咖啡因浓度高。",
+   t:"解馋选无糖茶、鲜奶、椰子水；奶茶选三分糖、小料减半。"},
+ ]},
+ {cat:"🥓 腌制 & 加工 & 高温食品",items:[
+  {n:"腊肠腊肉/腊味煲仔饭、咸鱼、梅菜/咸菜/酸菜",g:"limit",tag:"少吃",
+   u:"亚硝酸盐+高盐双重负担，咸鱼属一类致癌物；孕期高盐加重水肿与血压风险。",
+   t:"广式腊味解馋可以，别当主菜；同餐多配新鲜蔬菜。"},
+  {n:"罐头午餐肉、豆豉鲮鱼、腐乳、榨菜",g:"limit",tag:"少吃",
+   u:"高钠且有添加剂；看营养成分表钠含量＞600mg/100g 的少碰。",
+   t:"调味别靠它们；优先新鲜食材自己调味。"},
+  {n:"烧烤 / 煎炸 / 烟熏（烤串、炸鸡、烧腊脆皮）",g:"limit",tag:"少吃",
+   u:"高温产生苯并芘等有害物；油腻加重孕吐、烧心、便秘。",
+   t:"偶尔解馋选熟透的，电烤优于炭火；配柠檬水、陈皮水去腻。"},
+ ]},
+ {cat:"🦐 生冷水产 & 广式特色（本地必看）",items:[
+  {n:"生腌（血蛤、生蚝、腌蟹、醉蟹）",g:"no",tag:"坚决不吃",
+   u:"腌渍和酒糟杀不了菌和寄生虫；甲肝病毒、弧菌、肝吸虫风险全在其中。",
+   t:"熟腌（卤水煮透的）可以；“生腌”二字看到就绕开。"},
+  {n:"生蚝 / 生贝类（清蒸可以，刺身不行）",g:"limit",tag:"谨慎",
+   u:"贝类富集微生物与重金属，诺如病毒高发；生蚝刺身风险最大。",
+   t:"想吃选完全熟透、现点现做、明码标价的新鲜店。"},
+  {n:"大闸蟹/蟹黄蟹膏、中秋炒田螺",g:"limit",tag:"适量",
+   u:"蟹属寒凉易致胃肠不适，蟹膏胆固醇高；田螺寄生虫风险高，必须煮透，螺肉难消化。",
+   t:"中秋剥芋头、睇月光照常，炒田螺给家人吃；蟹去鳃去心、煮熟，一次一只解馋就好。"},
+  {n:"甲鱼（水鱼）、黄鳝泥鳅、生滚鱼片粥",g:"limit",tag:"谨慎",
+   u:"甲鱼属民间“大补”，孕期没必要；野生鳝鱼泥鳅寄生虫多；鱼片粥要保证滚透。",
+   t:"想吃选养殖、清理干净、彻底煮熟；蛇羹、河豚、生鱼等猎奇食材孕期全避开。"},
+ ]},
+ {cat:"🍀 蔬果 & 药膳茶饮（回南天湿气重也别乱喝凉茶）",items:[
+  {n:"广式凉茶（廿四味、癍痧、王老吉、夏桑菊）",g:"no",tag:"孕期避免",
+   u:"多为多种寒凉草药合煮，不少配方含孕妈不宜成分，且无孕期安全性标注；湿气重也不是喝凉茶的理由。",
+   t:"渴了喝温水、淡蜂蜜水；上火多睡觉、多喝水、多排便，比凉茶管用。"},
+  {n:"龟苓膏 / 山楂 / 酸梅汤 / 果丹皮等酸制品",g:"limit",tag:"少吃",
+   u:"龟苓膏含龟板等药材，孕妈不宜；山楂促宫缩为传统记述，孕早期尤其避免大量食用。",
+   t:"想酸口选柠檬、百香果、杨梅、酸奶。"},
+  {n:"未熟透的豆芽 / 生豆角四季豆 / 木薯",g:"no",tag:"坚决不吃",
+   u:"生豆芽易带致病菌；豆角未熟透含皂素会中毒；木薯含氰苷，必须彻底熟透。",
+   t:"豆芽炒透；豆角多煮几分钟变软变色；木薯削皮、煮透再吃。"},
+  {n:"荔枝、芒果、菠萝等易过敏高糖水果",g:"limit",tag:"适量",
+   u:"荔枝含糖极高、一次吃多易低血糖反跳；芒果菠萝易过敏；孕妈水果每天1-2拳头为宜。",
+   t:"低糖友好：番石榴、杨梅、番茄、猕猴桃、柚子。"},
+  {n:"冻柠茶 / 冻奶茶 / 冰淇淋 等冷饮",g:"limit",tag:"少冷少糖",
+   u:"冷饮刺激肠胃易腹泻；高糖高磷酸对体重与钙吸收不利。",
+   t:"冰箱拿出放5分钟再喝；自制无糖绿豆汤、酸梅汤更优。"},
+ ]},
+ {cat:"🍲 广式老火靓汤（孕妈怎么喝）",items:[
+  {n:"老火汤（煲3-4小时的猪骨/鸡汤、老火鱼头汤）",g:"limit",tag:"少吃",
+   u:"煲得越久，嘌呤、脂肪、盐分越高，对孕期血压、水肿、体重、血糖都不友好。",
+   t:"每周不超过1-2次；撇油、少盐、喝汤吃渣别喝油；尿酸高或高血压的孕妈改喝生滚汤。"},
+  {n:"薏米汤：冬瓜薏米排骨、薏米老鸭、绿豆薏米",g:"limit",tag:"孕早期避免",
+   u:"薏苡仁有“滑胎”的传统记载与兴奋子宫的实验资料，孕期保守起见避免，孕早期尤其。",
+   t:"想祛湿换赤小豆、白扁豆、茯苓——性质平和，更适合孕妈。"},
+  {n:"祛湿清热汤料：土茯苓、木棉花、夏枯草、绵茵陈、茅根竹蔗水",g:"limit",tag:"少喝",
+   u:"多为寒凉或古籍记载孕妈忌用的药材；回南天湿气重，别靠这锅汤“祛湿”。",
+   t:"祛湿饮食换个思路：冬瓜、赤小豆、白扁豆、陈皮瘦肉汤，清淡又安全。"},
+  {n:"药材煲汤（当归、田七、川芎、红花、益母草、桂圆肉过量）",g:"no",tag:"孕期避免",
+   u:"活血化瘀类药材孕妇禁忌；老广爱煲“滋补靓汤”，药材别自己配。",
+   t:"煲汤简单来：瘦肉/鲈鱼+姜+红枣2-3枚；不确定的药材一律不放。"},
+  {n:"大补汤：甲鱼（水鱼）、海马、鹿茸、牛鞭、紫河车、蛇汤、蝎子汤",g:"no",tag:"孕期避免",
+   u:"含动物激素或强补成分、刺激性大；蝎子、蛇等还有毒性及过敏风险，且没有“补”的必要。",
+   t:"孕期营养靠均衡饮食+产检指导，不靠“大补汤”。"},
+  {n:"安胎汤（桑寄生、杜仲、菟丝子、北芪当归等配方）",g:"doc",tag:"先问中医师",
+   u:"传统安胎方确实存在，但药材配伍、剂量因人而异、需辨证；乱煲乱喝可能适得其反。",
+   t:"有先兆流产等情况，先让产检医生/中医师评估，别按网上方子自己煲。"},
+  {n:"花胶/鱼肚汤、虫草花汤、猪肚汤等滋补汤",g:"limit",tag:"适量",
+   u:"高蛋白的同时脂肪和热量也不低；虫草花属菌类补品，孕期适量即可。",
+   t:"一周1-2次足够；炖清淡、少油少盐，别当成“每天一碗”的刚需。"},
+  {n:"生滚汤：番茄蛋花、丝瓜瘦肉、紫菜虾皮、鲈鱼豆腐",g:"ok",tag:"孕期首选",
+   u:"煮10-20分钟即可，鲜味足、嘌呤低、油盐可控，食材易保证全熟。",
+   t:"老广“汤水”换个做法：天天喝生滚汤，营养又安全。"},
+ ]},
+ {cat:"🍷 酒精 & 含酒精食品（整个孕期碰不得）",items:[
+  {n:"一切酒类：白酒、红酒、啤酒、黄酒、米酒（含自酿）",g:"no",tag:"孕期禁酒",
+   u:"酒精没有“安全剂量”——可透过胎盘影响胎儿发育；某些地区“月子酒”习俗同样在禁列。",
+   t:"聚餐主动说“不喝”，别碍于面子；以茶代酒或鲜榨果汁。"},
+  {n:"含酒精食品：糟卤、酒酿圆子、酒心巧克力、啤酒鸭、朗姆酒蛋糕、醉蟹醉虾",g:"no",tag:"孕期禁酒",
+   u:"“煮开了酒精就没了”是误区——酒精不会完全挥发；糟卤类还叠加菌群风险；醉蟹醉虾的生腌风险见“生冷水产”节。",
+   t:"买食品先看配料表：出现“酒、米酒、料酒、朗姆酒”字样的放回货架。"},
+  {n:"药酒 / 酒泡药材（人参酒、蛇酒、祛风湿酒、所谓“安胎酒”）",g:"no",tag:"孕期禁酒",
+   u:"酒精+药材双重风险，不少药酒含活血或毒性药材；宣称“安胎”“壮腰”的更不能碰。",
+   t:"家里药酒先收起来；孕期要中药调理找医生开汤剂，不喝泡酒。"},
+ ]},
+ {cat:"🥩 动物肝脏 & 内脏（补血别靠它）",items:[
+  {n:"猪肝 / 鸡肝 / 鸭肝（爆炒肝腰、猪肝粥、韭菜猪肝）",g:"limit",tag:"每周≤1次",
+   u:"维生素A含量极高，孕早期过量与胎儿畸形相关；胆固醇也高，每次50-100g以内。",
+   t:"补铁靠红肉、鸭血更稳；想吃了选新鲜、炒透，每周1次封顶。"},
+  {n:"其他内脏：猪腰、猪心、牛杂、毛肚",g:"limit",tag:"偶尔少量",
+   u:"内脏胆固醇、嘌呤偏高，污染物易富集；老广爱牛杂，孕期解馋即可。",
+   t:"选新鲜、彻底煮熟；每周不超过2次、每次一小份。"},
+  {n:"补铁替代：瘦红肉、牛肉、鸭血/猪血（熟食）、深绿叶菜",g:"ok",tag:"孕期推荐",
+   u:"血红素铁吸收率高，是孕期补铁的主力；搭配维C（橙子、番茄、青椒）吸收更好。",
+   t:"血制品选正规渠道、彻底煮熟；每周安排1-2次红肉或血制品，贫血复查跟上。"},
+ ]},
+ {cat:"⚠️ 其他重点（控糖控盐控风险）",items:[
+  {n:"蛋糕 / 甜品 / 高糖奶茶（妊娠糖尿病预防）",g:"limit",tag:"克制",
+   u:"孕中晚期控糖比控体重更重要；糖耐不合格的孕妈更要严格。",
+   t:"想吃甜选低GI：无糖酸奶+水果、黑巧克力≥70%、燕麦酥。"},
+  {n:"生水 / 井水 / 未烧开的山泉水",g:"no",tag:"坚决不吃",
+   u:"寄生虫卵与致病菌经水传播；洗水果、漱口也尽量用烧开晾凉的水或瓶装水。",
+   t:"饮用水烧开或买正规瓶装水；外食冷热分盘、不吃大排档生腌凉拌拼盘。"},
+ ]},
+];
+
+/* ---------- 工具 ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const fmtMD=d=>(d.getMonth()+1)+"."+pad(d.getDate());
+const wkCN=d=>"周"+"日一二三四五六"[d.getDay()];
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+let LMP=(()=>{try{const v=localStorage.getItem("lmp");if(v)return new Date(v+"T00:00:00");}catch(e){}return new Date(2026,6,25);})();
+const today=new Date();today.setHours(0,0,0,0);
+const offDays=d=>Math.round((d-LMP)/864e5);
+const weekDiff=Math.max(0,Math.floor(offDays(today)/7)), dayDiff=Math.max(0,offDays(today)%7), totalDays=offDays(today);
+
+/* ---------- 渲染 ---------- */
+function renderHero(){
+ $("#wk").textContent="孕"+weekDiff+"周+"+dayDiff+"天";
+ const due=addDays(LMP,280), conc=addDays(LMP,14), days=offDays(due)-totalDays;
+ $("#due").textContent=fmt(due); $("#conc").textContent=fmt(conc);
+ if(days>=0){$("#remain").textContent=days;$("#remain").parentElement.querySelector("span").textContent="天后见面";}
+ else{$("#remain").textContent=-days;$("#remain").parentElement.querySelector("span").textContent="天前 已见面🎉";}
+ $("#pct").textContent=Math.min(100,Math.round(totalDays/280*100))+"%";
+ const nxt=ITEMS.find(i=>i.t==="checkup"&&typeof i.d[0]==="number"&&i.d[0]>=Math.max(0,totalDays)&&i.d[0]<290);
+ if(nxt){const dn=addDays(LMP,nxt.d[0]);$("#nextTxt").innerHTML="下次关键产检：<b>"+fmtMD(dn)+"</b>（"+wkCN(dn)+"）· "+nxt.ti.split("：")[0].replace("★ ","")+" · 还有 <b>"+Math.max(0,offDays(dn)-totalDays)+"</b> 天";}
+ else if(totalDays<0){$("#nextTxt").textContent="还没到末次月经？看看右上角 ⚙ 设置日期吧";}
+ else{$("#nextTxt").innerHTML="已进入最后阶段：<b>随时可能见面</b>，待产包放门口，有规律宫缩就出发！";}
+}
+function dateStr(i){
+ if(typeof i.d[0]==="string")return i.d[1];
+ const a=addDays(LMP,i.d[0]);
+ if(i.d.length>1){const b=addDays(LMP,i.d[1]);return fmtMD(a)+" – "+fmtMD(b);}
+ return fmtMD(a)+" · "+wkCN(a);
+}
+function phaseOf(i){
+ const o=typeof i.d[0]==="number"?i.d[0]:300;
+ for(let k=PHASES.length-1;k>=0;k--) if(o>=PHASES[k][0])return PHASES[k][1];
+ return PHASES[0][1];
+}
+function cardHTML(i,idx,cIx){
+ const t=TYPES[i.t], isToday=typeof i.d[0]==="number"&&offDays(addDays(LMP,i.d[0]))===totalDays;
+ return "<article class='card "+t.cls+" "+(isToday?"today":"")+"' data-c='"+cIx+"' style='--i:"+(idx%12)+"'>"
+ +"<div class='meta'><span class='dt'>"+dateStr(i)+"</span><span class='wk'>"+i.w+"</span>"
+ +"<span class='chip "+t.cls+"'>"+t.label+"</span></div>"
+ +"<h3>"+i.ti+"</h3><div class='desc'>"+i.de+"</div>"
+ +"<div class='tip'>💡 "+i.tip+"</div></article>";
+}
+/* 文字型（分娩/产后）事件也折算成天数，便于产后仍能定位到最近事件 */
+const TXT_OFF={"分娩当日":280,"产后1周":287,"产后42天":322};
+const startOf=i=>typeof i.d[0]==="number"?i.d[0]:(TXT_OFF[i.d[1]]??1e9);
+/* 事件与“今天”的距离：区间命中为 0，否则取离区间边界最近的天数 */
+function itemDist(i){
+ const s=startOf(i);
+ if(s===1e9)return 1e6;
+ if(typeof i.d[0]==="number"&&i.d.length>1&&typeof i.d[1]==="number"){
+  if(totalDays<i.d[0])return i.d[0]-totalDays;
+  if(totalDays>i.d[1])return totalDays-i.d[1];
+  return 0;
+ }
+ return Math.abs(totalDays-s);
+}
+/* 平滑滚动到今天最近的事件（同为最近：优先“即将到来”，其次取更近的起点） */
+function scrollToNearest(pairs){
+ if(!pairs.length)return;
+ const up=i=>startOf(i)>=totalDays;
+ const best=pairs.map(p=>({p,d:itemDist(p.i)}))
+  .sort((a,b)=>a.d-b.d
+   ||(up(a.p.i)!==up(b.p.i)?(up(a.p.i)?-1:1)
+   :(up(a.p.i)?startOf(a.p.i)-startOf(b.p.i):startOf(b.p.i)-startOf(a.p.i))))[0];
+ const el=$("#view .card[data-c='"+best.p.ix+"']");
+ if(el){try{el.scrollIntoView({block:"center",behavior:"smooth"});}catch(e){el.scrollIntoView();}}
+}
+function renderAll(filter){
+ const items=ITEMS.map((i,ix)=>({i,ix})).filter(o=>filter==="checkup"?(o.i.t==="checkup"||o.i.t==="base"):o.i.t===filter);
+ let html="",lastPhase="",idx=0;
+ for(const o of items){
+  const p=phaseOf(o.i);
+  if(p!==lastPhase){lastPhase=p;html+="<section class='grp'><h2>"+p+"<span>"+items.filter(x=>phaseOf(x.i)===p).length+" 项</span></h2></section>";}
+  html+=cardHTML(o.i,idx++,o.ix);
+ }
+ $("#view").innerHTML=html||"<p style='text-align:center;color:#999;margin-top:40px'>暂无内容</p>";
+ scrollToNearest(items);
+}
+function renderGZ(){
+ let html="<p class='gz-lead'>广州职工专属办事清单，建议按顺序逐项办妥。</p><div class='alist'>";
+ html+=GZ.map(([tt,dd],i)=>"<div class='aitem' style='--i:"+(i%10)+"'><div class='no'>"+(i+1)+"</div>"
+ +"<div class='body'><div class='tt'>"+tt+"</div><div class='dd'>"+dd+"</div></div></div>").join("");
+ html+="</div><div class='acc'>"+ACC.map(([t,ls])=>"<details><summary>"+t+"</summary><div class='in'><ul>"+ls.map(l=>"<li>"+l+"</li>").join("")+"</ul></div></details>").join("")+"</div>";
+ $("#view").innerHTML=html;
+}
+function renderMed(){
+ let html="<div class='med-lead'><b>⚠️ 孕期用药三原则</b>"
+ +"<div class='r'><span>① 能用物理方法（喝水、休息、食疗、坐浴）先不用药</span>"
+ +"<span>② 任何药——含中成药、保健品——用前先问产科医生/药师</span>"
+ +"<span>③ 说明书标“孕妇慎用/禁用”或成分不明的，一律不碰</span></div></div>";
+ html+="<div class='acc'>"+MED.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 种</span></summary><div class='in'>"
+  +m.items.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+(i%10)+"'><div class='mn'>"+it.n+"<span class='mtag "+it.g+"'>"+it.tag+"</span></div>"
+  +"<div class='mu'>"+it.u+"</div>"+(it.t?"<div class='mt'>⚠️ "+it.t+"</div>":"")+"</div>").join("")
+  +"</div></details>").join("")+"</div>";
+ html+="<p class='mednote'>内容依据常用孕期用药指南与药品说明书整理，仅供家庭参考，<br>不能替代面诊——孕周、合并症不同，用药请以产科医生意见为准。</p>";
+ $("#view").innerHTML=html;
+}
+function renderDiet(){
+ let html="<div class='med-lead'><b>🍽️ 孕期忌口总原则</b>"
+ +"<div class='r'><span>① 不熟不吃：肉蛋海鲜全熟，生食一律避开</span>"
+ +"<span>② 不喝凉茶、不碰酒精，药材煲汤先问医生</span>"
+ +"<span>③ 控盐控糖控咖啡因，解馋要适量有度</span></div></div>";
+ html+="<div class='acc'>"+DIET.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 条</span></summary><div class='in'>"
+  +m.items.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+(i%10)+"'><div class='mn'>"+it.n+"<span class='mtag "+it.g+"'>"+it.tag+"</span></div>"
+  +"<div class='mu'>"+it.u+"</div>"+(it.t?"<div class='mt'>⚠️ "+it.t+"</div>":"")+"</div>").join("")
+  +"</div></details>").join("")+"</div>";
+ html+="<p class='mednote'>忌口清单依据孕期膳食指南与科普共识整理，仅供家庭参考；<br>患有妊娠糖尿病、高血压等合并症者，请遵产检医生更严格的个体化饮食建议。</p>";
+ $("#view").innerHTML=html;
+}
+$("#tabs").addEventListener("click",e=>{
+ const b=e.target.closest(".tab");if(!b)return;
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+ const v=b.dataset.v;
+ try{history.replaceState(null,"",v==="all"?"#":"#"+v);}catch(err){}
+ if(v==="gz"){renderGZ();window.scrollTo({top:0});}
+ else if(v==="med"){renderMed();window.scrollTo({top:0});}
+ else if(v==="diet"){renderDiet();window.scrollTo({top:0});}
+ else renderAll(v); /* 产检/大事/趣事：自动平滑滚动到今天最近的事件 */
+});
+renderHero();renderAll("checkup");
+const _h=location.hash.slice(1);
+if(_h){const _b=document.querySelector('.tab[data-v="'+_h+'"]');if(_b)_b.click();}
+</script>
+</body>
+</html>
