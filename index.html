@@ -587,31 +587,6 @@ function cardHTML(i,idx,cIx){
  +"<h3>"+i.ti+"</h3><div class='desc'>"+i.de+"</div>"
  +"<div class='tip'>💡 "+i.tip+"</div></article>";
 }
-/* 文字型（分娩/产后）事件也折算成天数，便于产后仍能定位到最近事件 */
-const TXT_OFF={"分娩当日":280,"产后1周":287,"产后42天":322};
-const startOf=i=>typeof i.d[0]==="number"?i.d[0]:(TXT_OFF[i.d[1]]??1e9);
-/* 事件与“今天”的距离：区间命中为 0，否则取离区间边界最近的天数 */
-function itemDist(i){
- const s=startOf(i);
- if(s===1e9)return 1e6;
- if(typeof i.d[0]==="number"&&i.d.length>1&&typeof i.d[1]==="number"){
-  if(totalDays<i.d[0])return i.d[0]-totalDays;
-  if(totalDays>i.d[1])return totalDays-i.d[1];
-  return 0;
- }
- return Math.abs(totalDays-s);
-}
-/* 平滑滚动到今天最近的事件（同为最近：优先“即将到来”，其次取更近的起点） */
-function scrollToNearest(pairs){
- if(!pairs.length)return;
- const up=i=>startOf(i)>=totalDays;
- const best=pairs.map(p=>({p,d:itemDist(p.i)}))
-  .sort((a,b)=>a.d-b.d
-   ||(up(a.p.i)!==up(b.p.i)?(up(a.p.i)?-1:1)
-   :(up(a.p.i)?startOf(a.p.i)-startOf(b.p.i):startOf(b.p.i)-startOf(a.p.i))))[0];
- const el=$("#view .card[data-c='"+best.p.ix+"']");
- if(el){try{el.scrollIntoView({block:"center",behavior:"smooth"});}catch(e){el.scrollIntoView();}}
-}
 function renderAll(filter){
  const items=ITEMS.map((i,ix)=>({i,ix})).filter(o=>filter==="checkup"?(o.i.t==="checkup"||o.i.t==="base"):o.i.t===filter);
  let html="",lastPhase="",idx=0;
@@ -621,7 +596,6 @@ function renderAll(filter){
   html+=cardHTML(o.i,idx++,o.ix);
  }
  $("#view").innerHTML=html||"<p style='text-align:center;color:#999;margin-top:40px'>暂无内容</p>";
- scrollToNearest(items);
 }
 function renderGZ(){
  let html="<p class='gz-lead'>广州职工专属办事清单，建议按顺序逐项办妥。</p><div class='alist'>";
@@ -662,7 +636,7 @@ $("#tabs").addEventListener("click",e=>{
  if(v==="gz"){renderGZ();window.scrollTo({top:0});}
  else if(v==="med"){renderMed();window.scrollTo({top:0});}
  else if(v==="diet"){renderDiet();window.scrollTo({top:0});}
- else renderAll(v); /* 产检/大事/趣事：自动平滑滚动到今天最近的事件 */
+ else renderAll(v); /* 产检/大事/趣事：按筛选渲染 */
 });
 renderHero();renderAll("checkup");
 const _h=location.hash.slice(1);
