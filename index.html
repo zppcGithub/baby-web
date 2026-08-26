@@ -110,11 +110,6 @@ details .in li{margin:5px 0 5px 16px}
 details .in b{color:var(--rose-d)}
 
 /* ---------- med page ---------- */
-.med-lead{margin-top:4px;background:linear-gradient(90deg,#FDF1EC,#FCF6EE);border:1px solid #F3D9CC;border-radius:14px;
-  padding:12px 13px;font-size:12.5px;color:var(--ink2);line-height:1.75}
-.med-lead b{color:#B04A32}
-.med-lead .r{display:flex;gap:8px;margin-top:9px}
-.med-lead .r span{flex:1;background:#fff;border:1px solid #F3DDD1;border-radius:10px;padding:7px 9px;font-size:11px;line-height:1.65}
 .mitem{border:1px solid var(--line);border-left-width:3px;border-left-color:var(--sage);border-radius:11px;
   padding:9px 11px;margin:9px 0;background:var(--card);animation:rise .5s ease both;animation-delay:calc(var(--i)*18ms)}
 .mitem.doc{border-left-color:var(--sky)}
@@ -129,7 +124,6 @@ details .in b{color:var(--rose-d)}
 .mu{font-size:11.8px;color:var(--ink2);line-height:1.7;margin-top:4px}
 .mt{font-size:11px;line-height:1.65;color:#A5452F;background:#FBEEE9;border-radius:8px;padding:6px 9px;margin-top:7px}
 .ccnt{font-size:10.5px;color:var(--ink2);font-weight:600;margin:0 2px}
-.mednote{text-align:center;font-size:10.5px;color:var(--ink2);opacity:.85;line-height:1.8;margin-top:14px}
 </style>
 </head>
 <body>
@@ -605,27 +599,17 @@ function renderGZ(){
  $("#view").innerHTML=html;
 }
 function renderMed(){
- let html="<div class='med-lead'><b>⚠️ 孕期用药三原则</b>"
- +"<div class='r'><span>① 能用物理方法（喝水、休息、食疗、坐浴）先不用药</span>"
- +"<span>② 任何药——含中成药、保健品——用前先问产科医生/药师</span>"
- +"<span>③ 说明书标“孕妇慎用/禁用”或成分不明的，一律不碰</span></div></div>";
- html+="<div class='acc'>"+MED.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 种</span></summary><div class='in'>"
+ let html="<div class='acc'>"+MED.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 种</span></summary><div class='in'>"
   +m.items.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+(i%10)+"'><div class='mn'>"+it.n+"<span class='mtag "+it.g+"'>"+it.tag+"</span></div>"
   +"<div class='mu'>"+it.u+"</div>"+(it.t?"<div class='mt'>⚠️ "+it.t+"</div>":"")+"</div>").join("")
   +"</div></details>").join("")+"</div>";
- html+="<p class='mednote'>内容依据常用孕期用药指南与药品说明书整理，仅供家庭参考，<br>不能替代面诊——孕周、合并症不同，用药请以产科医生意见为准。</p>";
  $("#view").innerHTML=html;
 }
 function renderDiet(){
- let html="<div class='med-lead'><b>🍽️ 孕期忌口总原则</b>"
- +"<div class='r'><span>① 不熟不吃：肉蛋海鲜全熟，生食一律避开</span>"
- +"<span>② 不喝凉茶、不碰酒精，药材煲汤先问医生</span>"
- +"<span>③ 控盐控糖控咖啡因，解馋要适量有度</span></div></div>";
- html+="<div class='acc'>"+DIET.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 条</span></summary><div class='in'>"
+ let html="<div class='acc'>"+DIET.map(m=>"<details><summary>"+m.cat+"<span class='ccnt'>"+m.items.length+" 条</span></summary><div class='in'>"
   +m.items.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+(i%10)+"'><div class='mn'>"+it.n+"<span class='mtag "+it.g+"'>"+it.tag+"</span></div>"
   +"<div class='mu'>"+it.u+"</div>"+(it.t?"<div class='mt'>⚠️ "+it.t+"</div>":"")+"</div>").join("")
   +"</div></details>").join("")+"</div>";
- html+="<p class='mednote'>忌口清单依据孕期膳食指南与科普共识整理，仅供家庭参考；<br>患有妊娠糖尿病、高血压等合并症者，请遵产检医生更严格的个体化饮食建议。</p>";
  $("#view").innerHTML=html;
 }
 $("#tabs").addEventListener("click",e=>{
