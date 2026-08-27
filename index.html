@@ -139,12 +139,18 @@ details .in b{color:var(--rose-d)}
 .vrec{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:12px 13px;
   box-shadow:0 4px 14px -8px rgba(160,90,110,.18);animation:rise .5s ease both}
 .vrec .vrec-tt{font-size:12.5px;font-weight:700;color:var(--rose-d);margin-bottom:8px}
-.vrec .vbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.vrec .vbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 2px;font-size:11px;font-weight:600;
-  color:var(--ink2);cursor:pointer;transition:.2s;min-width:0;white-space:nowrap;outline:none;font-family:var(--sans)}
-.vrec .vbtn.on{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 3px 9px -4px rgba(143,53,84,.5)}
-.vrec .vstat{font-size:11.3px;color:var(--ink2);line-height:1.6;margin-top:8px}
-.vrec .vstat b{color:var(--rose-d)}
+.vrec .vrow{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-left-width:4px;border-radius:11px;
+  padding:9px 11px;margin-top:8px;background:#FFFDFB}
+.vrec .vrow.ok{border-left-color:var(--sage)}
+.vrec .vrow.limit{border-left-color:#DCA45C;background:#FDF8EF}
+.vrec .vrow.no{border-left-color:#D2694B;background:#FDF4F0}
+.vrec .vl{flex:none;font-size:12px;font-weight:700;white-space:nowrap;color:var(--ink);line-height:1.45}
+.vrec .vl small{display:block;font-size:10px;font-weight:600;opacity:.85;margin-top:2px}
+.vrec .vrow.ok .vl{color:var(--sage)}
+.vrec .vrow.limit .vl{color:#B07A2E}
+.vrec .vrow.no .vl{color:#B04A32}
+.vrec .vd{font-size:12px;color:var(--ink2);line-height:1.65}
+.vrec .vd b{color:var(--rose-d)}
 </style>
 </head>
 <body>
@@ -561,20 +567,17 @@ const DIET=[
 ];
 
 /* ---------- 孕吐数据 ---------- */
-const VOMIT_LEVELS=["没吐","1-2 次","3-5 次","6 次以上"];
+const VOMIT_SEV=[
+ {g:"ok",l:"没吐",t:"正常",d:"约三成孕妈全程几乎不吐，宝宝一样健康",a:"照常生活，无需任何处理"},
+ {g:"ok",l:"1-2 次/天",t:"轻度",d:"偶尔吐 1-2 次，不影响吃饭睡觉，体重稳定",a:"「止吐六招」足够，不用吃药"},
+ {g:"limit",l:"3-5 次/天",t:"中度",d:"吐得变多、饭量下降，但还能进水",a:"六招 + 维生素B6（遵医嘱）；重点补水休息，别硬扛"},
+ {g:"no",l:"6 次以上/天",t:"重度信号",d:"接近妊娠剧吐（HG）：水都喝不进、尿少、体重往下掉、头晕发软",a:"尽快就医评估；喝不下水/尿少/掉体重任一项持续，当天就去，该输液就输液"}
+];
 const VOMIT_TL=[
  ["孕5-6周","序幕","受精卵着床，hCG 开始爬升，部分孕妈晨起犯恶心"],
  ["孕8-10周","高峰期","hCG 冲到最高点，通常是最难受的几周"],
  ["孕12-14周","多数缓解","约七成孕妈在此前后明显好转"],
  ["孕16-20周","少数持续","约 15-20% 会吐到 20 周后，个别持续整个孕期——都属正常"]
-];
-const VOMIT_LV=[
- {g:"ok",n:"轻度 · 恶心偶吐，胃口还在",u:"一天吐 1-2 次以内，不影响吃饭睡觉，体重稳定",
-  i:"照常生活即可，把下面「止吐六招」用起来；不用吃药"},
- {g:"limit",n:"中度 · 吐得变多、吃得变少",u:"每天吐 3-5 次，饭量明显下降，但还能进水",
-  i:"六招 + 维生素B6（遵医嘱 10-25mg/次、每日 3 次）；重点补水和休息，别硬扛"},
- {g:"no",n:"重度 · 水都喝不进（妊娠剧吐）",u:"一吃一喝就吐、尿量减少、体重往下掉、头晕发软",
-  i:"立即就医：可能需住院补液纠正电解质。这不是「娇气」，是正经病，该输液就输液"}
 ];
 const VOMIT_SIX=[
  ["少食多餐","一天 5-6 顿、每顿三分饱；胃里空了更容易反胃，宁可多垫几次"],
@@ -755,23 +758,15 @@ function renderFetal(){
 }
 function sec(t,open,inner){return "<details"+(open?" open":"")+"><summary>"+t+"</summary><div class='in'>"+inner+"</div></details>";}
 function renderVomit(){
- const rec=(()=>{try{return JSON.parse(localStorage.getItem("vomitRec")||"{}");}catch(e){return {};}})();
- const k=fmt(today), cur=(k in rec)?+rec[k]:null;
- const wk=Object.keys(rec).filter(x=>{const d=new Date(x+"T00:00:00");const o=Math.round((d-LMP)/864e5);return o>=totalDays-6&&o<=totalDays;}).length;
  const seclis=ls=>"<ul>"+ls.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
- const btns=VOMIT_LEVELS.map((l,i)=>"<button class='vbtn "+(cur===i?"on":"")+"' data-vb='"+i+"'>"+l+"</button>").join("");
- const lv=VOMIT_LV.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+i+"'><div class='mn'>"+it.n+"</div><div class='mu'>"+it.u+"</div>"
-  +"<div class='mt'>👉 "+it.i+"</div></div>").join("");
+ const sev=VOMIT_SEV.map(it=>"<div class='vrow "+it.g+"'><div class='vl'>"+it.l+"<small>"+it.t+"</small></div>"
+  +"<div class='vd'>"+it.d+"<br><b>怎么办：</b>"+it.a+"</div></div>").join("");
  let html=
   "<article class='card' style='--i:0'><div class='meta'><span class='dt'>孕吐专页</span><span class='chip fun'>日常必修</span></div>"
   +"<h3>🤢 孕吐：宝宝给妈妈的「成长测试」</h3>"
   +"<div class='desc'>约七成孕妈会经历恶心，近一半真的会吐。多数孕妈<b>6-9 周</b>开始、<b>8-10 周最难受、12-14 周明显缓解</b>——这是 hCG 高峰期的正常反应，不是矫情，更不是你的错。</div>"
-  +"<div class='tip'>💡 本页有：分级自查 · 不花钱的缓解招 · 就医红线 · 用药清单 · 常见疑问 · 上班族指南</div></article>"
-  +"<div class='vrec'><div class='vrec-tt'>📝 今天吐了几次？（存在本机，只给自己看）</div>"
-  +"<div class='vbtns'>"+btns+"</div><div class='vstat'>"
-  +(cur!==null?"今天已记录：<b>"+VOMIT_LEVELS[cur]+"</b> · ":"今天还没记录 · ")
-  +"最近 7 天共记 <b>"+wk+"</b> 天"+((wk>=5)?"，坚持记录很棒！":"")+"</div></div>"
-  +"<div class='pathsel'><div class='ps-title'>🌡️ 分级自查：你现在是哪一级？</div>"+lv+"</div>"
+  +"<div class='tip'>💡 本页有：强度分级 · 不花钱的缓解招 · 就医红线 · 用药清单 · 常见疑问 · 上班族指南</div></article>"
+  +"<div class='vrec'><div class='vrec-tt'>📊 孕吐强度分级：对照你今天的频率</div>"+sev+"</div>"
   +"<div class='acc'>"
   +sec("📅 时间线：什么时候开始、什么时候结束",true,seclis(VOMIT_TL.map(x=>"<b>"+x[0]+" · "+x[1]+"</b>："+x[2])))
   +sec("🍚 止吐六招（不花钱版）",false,seclis(VOMIT_SIX.map(x=>"<b>"+x[0]+"</b>："+x[1])))
@@ -782,9 +777,6 @@ function renderVomit(){
   +sec("💼 上班族孕吐生存指南",false,seclis(VOMIT_WORK.map(x=>"<b>"+x[0]+"</b>："+x[1])))
   +"</div>";
  $("#view").innerHTML=html;
- $("#view").querySelectorAll(".vbtn").forEach(b=>{
-  b.onclick=()=>{rec[k]=+(b.dataset.vb);try{localStorage.setItem("vomitRec",JSON.stringify(rec));}catch(e){}renderVomit();};
- });
 }
 $("#tabs").addEventListener("click",e=>{
  const b=e.target.closest(".tab");if(!b)return;
