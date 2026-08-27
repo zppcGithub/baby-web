@@ -13,7 +13,7 @@
   --sage:#5F8F74; --sage-l:#E5F1E9; --sky:#4E7FAC; --sky-l:#E3EDF7; --gray:#8A8A8A;
   --serif:Georgia,"Songti SC","STSong","Noto Serif SC", SimSun, serif;
   --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
-  --tabbar:58px;
+  --tabbar:92px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 /* 隐藏系统滚动条：整页按移动 App 风格设计，不需要出现灰条/灰色块 */
@@ -58,7 +58,7 @@ body::before{content:"";position:fixed;inset:0;background:
 
 /* ---------- tabs ---------- */
 .tabs{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(255,248,242,.96),rgba(255,248,242,.88) 78%,transparent);
-  padding:10px 0 12px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;width:100%}
+  padding:10px 0 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
 .tab{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 2px;font-size:11.5px;font-weight:600;color:var(--ink2);
   text-align:center;cursor:pointer;transition:.25s;box-shadow:0 2px 6px rgba(160,90,110,.06);min-width:0;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;outline:none}
@@ -135,6 +135,16 @@ details .in b{color:var(--rose-d)}
 .mu{font-size:11.8px;color:var(--ink2);line-height:1.7;margin-top:4px}
 .mt{font-size:11px;line-height:1.65;color:#A5452F;background:#FBEEE9;border-radius:8px;padding:6px 9px;margin-top:7px}
 .ccnt{font-size:10.5px;color:var(--ink2);font-weight:600;margin:0 2px}
+/* ---------- 孕吐专区 ---------- */
+.vrec{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:12px 13px;
+  box-shadow:0 4px 14px -8px rgba(160,90,110,.18);animation:rise .5s ease both}
+.vrec .vrec-tt{font-size:12.5px;font-weight:700;color:var(--rose-d);margin-bottom:8px}
+.vrec .vbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.vrec .vbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 2px;font-size:11px;font-weight:600;
+  color:var(--ink2);cursor:pointer;transition:.2s;min-width:0;white-space:nowrap;outline:none;font-family:var(--sans)}
+.vrec .vbtn.on{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 3px 9px -4px rgba(143,53,84,.5)}
+.vrec .vstat{font-size:11.3px;color:var(--ink2);line-height:1.6;margin-top:8px}
+.vrec .vstat b{color:var(--rose-d)}
 </style>
 </head>
 <body>
@@ -160,6 +170,7 @@ details .in b{color:var(--rose-d)}
     <button class="tab" data-v="big">大事</button>
     <button class="tab" data-v="fun">趣事</button>
     <button class="tab" data-v="fetal">胎动</button>
+    <button class="tab" data-v="vomit">孕吐</button>
     <button class="tab" data-v="gz">广州办事</button>
     <button class="tab" data-v="med">常备药</button>
     <button class="tab" data-v="diet">忌口</button>
@@ -549,6 +560,60 @@ const DIET=[
  ]},
 ];
 
+/* ---------- 孕吐数据 ---------- */
+const VOMIT_LEVELS=["没吐","1-2 次","3-5 次","6 次以上"];
+const VOMIT_TL=[
+ ["孕5-6周","序幕","受精卵着床，hCG 开始爬升，部分孕妈晨起犯恶心"],
+ ["孕8-10周","高峰期","hCG 冲到最高点，通常是最难受的几周"],
+ ["孕12-14周","多数缓解","约七成孕妈在此前后明显好转"],
+ ["孕16-20周","少数持续","约 15-20% 会吐到 20 周后，个别持续整个孕期——都属正常"]
+];
+const VOMIT_LV=[
+ {g:"ok",n:"轻度 · 恶心偶吐，胃口还在",u:"一天吐 1-2 次以内，不影响吃饭睡觉，体重稳定",
+  i:"照常生活即可，把下面「止吐六招」用起来；不用吃药"},
+ {g:"limit",n:"中度 · 吐得变多、吃得变少",u:"每天吐 3-5 次，饭量明显下降，但还能进水",
+  i:"六招 + 维生素B6（遵医嘱 10-25mg/次、每日 3 次）；重点补水和休息，别硬扛"},
+ {g:"no",n:"重度 · 水都喝不进（妊娠剧吐）",u:"一吃一喝就吐、尿量减少、体重往下掉、头晕发软",
+  i:"立即就医：可能需住院补液纠正电解质。这不是「娇气」，是正经病，该输液就输液"}
+];
+const VOMIT_SIX=[
+ ["少食多餐","一天 5-6 顿、每顿三分饱；胃里空了更容易反胃，宁可多垫几次"],
+ ["干湿分离","固体和液体分开 30 分钟——别边吃饭边灌汤；广式老火汤、生滚粥汤水一律「饭后半小时再说」"],
+ ["起床先垫两口","枕头边放苏打饼干/面包干，睁眼先吃两口再起身，别空腹下床"],
+ ["躲开气味","油烟、香水、咖啡、鱼腥、螺蛳粉……闻到就犯恶心的，先躲；做饭的事交给队友"],
+ ["吃点姜","姜茶、姜糖、姜汁饼干，每天几克姜就够；广式姜醋、姜撞奶可适量解馋"],
+ ["凉食小口","热汤热气会放大恶心感；凉一点的白粥、水果、柠檬薄荷水，小口慢慢抿"]
+];
+const VOMIT_RED=[
+ ["喝不下水","完全喝不进 / 一吃就吐，超过 12-24 小时"],
+ ["尿少色深","尿量明显变少、尿色深黄——警惕脱水"],
+ ["体重速降","一周掉超过 1kg，或比孕前下降 5% 以上"],
+ ["吐咖啡色物","呕吐物带血丝或呈咖啡色"],
+ ["头晕发软","站起来发软、心慌心跳快、呼吸急促"],
+ ["伴其他症状","腹痛、发热、皮肤眼白发黄（黄疸）"],
+ ["意识模糊","嗜睡、叫不醒——立刻急诊"]
+];
+const VOMIT_MED=[
+ ["✅ 安全首选：维生素B6","10-25mg/次、每日 3 次，研究最充分；具体剂量先问产检医生"],
+ ["👩‍⚕️ 医生评估后再用","复方多西拉敏（多西拉敏+B6，国外一线、国内部分医院可开）；甲氧氯普胺、昂丹司琼等处方止吐药——由医生按孕周权衡"],
+ ["❌ 坚决别碰","布洛芬等 NSAIDs、复方感冒药水（含右美沙芬/伪麻黄碱）、藿香正气水（高浓度酒精+生半夏）、任何「止吐神药」「保胎偏方」、广式凉茶（详见【忌口】页）"]
+];
+const VOMIT_QA=[
+ ["吐得凶＝宝宝不好？","没有直接对应关系；轻中度孕吐还与流产率降低相关（说明胎盘激素在正常干活）。别用孕吐给自己下判词"],
+ ["吐得轻＝胎像不稳？","同样没依据；约三成孕妈全程几乎不吐，宝宝一样健康"],
+ ["双胞胎更容易吐？","是：双胎 hCG 更高，反应往往更重；但「怀女孩才吐得凶」是民间说法，无科学依据"],
+ ["为什么下午晚上也吐？","「晨吐」只是名字，hCG 全天都在；每个人吐点不同，规律就好"],
+ ["刚吐完怎么办？","先漱口、小口喝温水补液，缓 20 分钟再垫两片干粮；别马上强迫自己吃"],
+ ["要一直吐到生吗？","多数 12-14 周缓解，少数持续到 20 周后、个别全程——都有缓解办法，别绝望"]
+];
+const VOMIT_WORK=[
+ ["工位常备","苏打饼干、姜糖、小面包、电解质水或柠檬片，馋了随时垫"],
+ ["气味太冲","同事外卖/咖啡味重，换窗边座位、开窗、戴口罩——脸皮厚一点没关系"],
+ ["该请假就请假","产检假视同出勤不扣工资；孕吐严重就诊的病假按病假处理，别硬撑"],
+ ["通勤减负","包里备垃圾袋+纸巾，尽量避开高峰；实在难受的地铁，晚走半小时"],
+ ["提前沟通","和领导同事提前打个招呼，多数人会理解；必要时申请短期居家办公"]
+];
+
 /* ---------- 工具 ---------- */
 const pad=n=>String(n).padStart(2,"0");
 const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -688,6 +753,39 @@ function renderFetal(){
  +"</div>";
  $("#view").innerHTML=html;
 }
+function sec(t,open,inner){return "<details"+(open?" open":"")+"><summary>"+t+"</summary><div class='in'>"+inner+"</div></details>";}
+function renderVomit(){
+ const rec=(()=>{try{return JSON.parse(localStorage.getItem("vomitRec")||"{}");}catch(e){return {};}})();
+ const k=fmt(today), cur=(k in rec)?+rec[k]:null;
+ const wk=Object.keys(rec).filter(x=>{const d=new Date(x+"T00:00:00");const o=Math.round((d-LMP)/864e5);return o>=totalDays-6&&o<=totalDays;}).length;
+ const seclis=ls=>"<ul>"+ls.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+ const btns=VOMIT_LEVELS.map((l,i)=>"<button class='vbtn "+(cur===i?"on":"")+"' data-vb='"+i+"'>"+l+"</button>").join("");
+ const lv=VOMIT_LV.map((it,i)=>"<div class='mitem "+it.g+"' style='--i:"+i+"'><div class='mn'>"+it.n+"</div><div class='mu'>"+it.u+"</div>"
+  +"<div class='mt'>👉 "+it.i+"</div></div>").join("");
+ let html=
+  "<article class='card' style='--i:0'><div class='meta'><span class='dt'>孕吐专页</span><span class='chip fun'>日常必修</span></div>"
+  +"<h3>🤢 孕吐：宝宝给妈妈的「成长测试」</h3>"
+  +"<div class='desc'>约七成孕妈会经历恶心，近一半真的会吐。多数孕妈<b>6-9 周</b>开始、<b>8-10 周最难受、12-14 周明显缓解</b>——这是 hCG 高峰期的正常反应，不是矫情，更不是你的错。</div>"
+  +"<div class='tip'>💡 本页有：分级自查 · 不花钱的缓解招 · 就医红线 · 用药清单 · 常见疑问 · 上班族指南</div></article>"
+  +"<div class='vrec'><div class='vrec-tt'>📝 今天吐了几次？（存在本机，只给自己看）</div>"
+  +"<div class='vbtns'>"+btns+"</div><div class='vstat'>"
+  +(cur!==null?"今天已记录：<b>"+VOMIT_LEVELS[cur]+"</b> · ":"今天还没记录 · ")
+  +"最近 7 天共记 <b>"+wk+"</b> 天"+((wk>=5)?"，坚持记录很棒！":"")+"</div></div>"
+  +"<div class='pathsel'><div class='ps-title'>🌡️ 分级自查：你现在是哪一级？</div>"+lv+"</div>"
+  +"<div class='acc'>"
+  +sec("📅 时间线：什么时候开始、什么时候结束",true,seclis(VOMIT_TL.map(x=>"<b>"+x[0]+" · "+x[1]+"</b>："+x[2])))
+  +sec("🍚 止吐六招（不花钱版）",false,seclis(VOMIT_SIX.map(x=>"<b>"+x[0]+"</b>："+x[1])))
+  +sec("🚨 这 7 种情况，马上去医院",false,seclis(VOMIT_RED.map(x=>"<b>"+x[0]+"</b>："+x[1]))
+   +"<li style='list-style:none;margin-left:0;color:#A5452F'><b>妊娠剧吐（HG）</b>发生率约 1-2%，需要住院补液、纠正电解质——早发现早处理，对妈妈和宝宝都好，该输液就输液。</li>")
+  +sec("💊 用药：哪些安全、哪些别碰",false,seclis(VOMIT_MED.map(x=>"<b>"+x[0]+"</b>："+x[1])))
+  +sec("❓ 常见疑问 & 辟谣",false,seclis(VOMIT_QA.map(x=>"<b>"+x[0]+"</b>→ "+x[1])))
+  +sec("💼 上班族孕吐生存指南",false,seclis(VOMIT_WORK.map(x=>"<b>"+x[0]+"</b>："+x[1])))
+  +"</div>";
+ $("#view").innerHTML=html;
+ $("#view").querySelectorAll(".vbtn").forEach(b=>{
+  b.onclick=()=>{rec[k]=+(b.dataset.vb);try{localStorage.setItem("vomitRec",JSON.stringify(rec));}catch(e){}renderVomit();};
+ });
+}
 $("#tabs").addEventListener("click",e=>{
  const b=e.target.closest(".tab");if(!b)return;
  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
@@ -697,6 +795,7 @@ $("#tabs").addEventListener("click",e=>{
  else if(v==="med"){renderMed();window.scrollTo({top:0});}
  else if(v==="diet"){renderDiet();window.scrollTo({top:0});}
  else if(v==="fetal"){renderFetal();window.scrollTo({top:0});}
+ else if(v==="vomit"){renderVomit();window.scrollTo({top:0});}
  else renderAll(v); /* 产检/大事/趣事：按筛选渲染 */
 });
 renderHero();renderAll("checkup");
